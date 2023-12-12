@@ -24,7 +24,7 @@ Here we have a introductory video for you to better know what is Random Forest.
 
 [Introductory Video](https://www.youtube.com/watch?v=v6VJ2RO66Ag)
 
-## Example Data -- Mushroom Data to Implement
+## Example Data -- Hotel Reservation Data to Implement
 
 ### Data Description
 
@@ -76,14 +76,11 @@ This dataset is obtained from kaggle. There are 19 predictors in this data set. 
 
 ```{r results='hide', message=FALSE}
 # loading packages
-library(tidymodels)
 library(tidyverse)
-library(randomForest)
 library(dplyr)
-library(caret)
-library(janitor)
-library(ranger)
-tidymodels_prefer()
+library(tidymodels)
+library(janitor) ## clean_names()
+library(ranger) ## random forest model engine
 
 # loading the data
 hotel <- read.csv("data/HotelReservations.csv")
@@ -92,8 +89,15 @@ hotel <- read.csv("data/HotelReservations.csv")
 ### Preprocess the data
 
 ```{r}
-# turn a categorical variable into factors
-hotel$booking_status <- as.factor(hotel$booking_status)
+# cleaning predictor names
+hotel <- clean_names(hotel)
+
+# summarize data
+summary(hotel) # Categorical variables are stored in "character" variables
+
+# Convert characters to factors and rename factor levels
+hotel<- data.frame(lapply(hotel, factor))
+summary(hotel)
 ```
 
 ::: {.callout-note style="background-color: #ffebee; color: black; border-left: 3px solid red;"}

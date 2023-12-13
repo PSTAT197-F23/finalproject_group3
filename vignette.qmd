@@ -124,6 +124,40 @@ Use `lapply()` to turn categorical variables into factors.
 hotel<- data.frame(lapply(hotel, factor))
 ```
 
+### Visualize EDA
+
+Let's make a correlation matrix to see the relationships of variables.
+
+```{r}
+hotel %>%
+  select(is.numeric) %>%
+  cor() %>%
+  corrplot()
+```
+
+We can see that no_of_repeated_guest is positively correlated with no_of_previous_bookings_not_canceled. Arrival year is negatively correlated with arrival_month. However, the correlation matrix indicates that there are too many predictors, some of which are more or less pointless. Therefore, we will select a few key predictors later on to simplify and clarify our model's predictions.
+
+Additonally, let's make a histogram to see the distribution of the booking status.
+
+```{r}
+hotel %>%
+  ggplot(aes(x=booking_status)) +
+  geom_bar() +
+  labs(title = "Distribution of Booking Status")
+```
+
+From the plot, we can see that "Yes" has far more outcomes than "No," indicating that many people cancel their reservations. This means we will have a substantial amount of data for analysis.
+
+Lastly, let's make a ggplot of booking_status by lead_time.
+
+```{r}
+ggplot(hotel, aes(lead_time)) + 
+  geom_bar(aes(fill = booking_status)) +
+  scale_fill_manual(values = c("#4DB3E6", "#37004D"))
+```
+
+We can observe that lead time varies among all observations. However, as lead time increases, the instances of "No" surpass those of "Yes". This is indicated by the deep blue cylinder tending to decrease as the x-axis increases. Therefore, lead time might be a good indicator.
+
 ### Data Partition
 
 Split the dataset into a training and a testing set. Use "booking_status" as the stratification variable to ensure it has equivalent proportions in two sets.

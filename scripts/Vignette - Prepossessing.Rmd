@@ -40,7 +40,7 @@ hotel
 ```
 
 ## Preprocessing - Visualizing EDA
-# Correlation atrix:
+# Correlation Matrix:
 ```{r}
 hotel %>%
   select(is.numeric) %>%

@@ -123,3 +123,9 @@ hotel_results_rf_tune <- tune_grid(
 show_best(hotel_results_rf_tune, metric = "roc_auc")
 
 
+# VIP plot
+final_rf_model %>% extract_fit_parsnip() %>% 
+  vip() +
+  theme_minimal()
+
+

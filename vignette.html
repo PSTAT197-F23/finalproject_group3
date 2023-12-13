@@ -99,7 +99,6 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <link href="vignette_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="vignette_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 </head>
 
@@ -149,7 +148,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <ul>
 <li><p>learn the intuitions behind Random Forest models</p>
 <ul>
-<li>Decision trees, hyperparameters, and more</li>
+<li>Decision trees, hyper-parameters, and more</li>
 </ul></li>
 <li><p>Implement, tune, and evaluate Random Forest models in R</p></li>
 </ul>
@@ -238,16 +237,15 @@ Action
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Use lapply() to turn categorical variables into factors.</p>
+<p>Use <code>lapply()</code> to turn categorical variables into factors.</p>
 </div>
 </div>
 <div class="cell">
 
 </div>
 </section>
-</section>
-<section id="data-partition" class="level2">
-<h2 class="anchored" data-anchor-id="data-partition">Data Partition</h2>
+<section id="data-partition" class="level3">
+<h3 class="anchored" data-anchor-id="data-partition">Data Partition</h3>
 <p>Split the dataset into a training and a testing set. Use “booking_status” as the stratification variable to ensure it has equivalent proportions in two sets.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">3435</span>)</span>
@@ -270,6 +268,7 @@ Action
 </div>
 </div>
 </section>
+</section>
 <section id="preprocessing-recipe" class="level2">
 <h2 class="anchored" data-anchor-id="preprocessing-recipe">Preprocessing Recipe</h2>
 <p>Now let’s create a recipe for our dataset.</p>
@@ -277,12 +276,12 @@ Action
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a recipe for the dataset</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>hotel_recipe <span class="ot">&lt;-</span> <span class="fu">recipe</span>(booking_status <span class="sc">~</span>., <span class="at">data =</span> hotel_train) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Limit the amount of factor levels for each predictor using step_other(). Factor levels with an occurring frequency less than 0.05 would be pooled to “other”.</p>
+<p>Limit the amount of factor levels for each predictor using <code>step_other()</code>. Factor levels with an occurring frequency less than 0.05 would be pooled to “other”.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>hotel_recipe <span class="ot">&lt;-</span> hotel_recipe <span class="sc">%&gt;%</span> </span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_other</span>(<span class="fu">all_predictors</span>(), <span class="at">threshold =</span> <span class="fl">0.05</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Using step_dummy(), encode factor variables to multiple binary variables which correspond to each factor level.</p>
+<p>Using <code>step_dummy()</code>, encode factor variables to multiple binary variables which correspond to each factor level.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>hotel_recipe <span class="ot">&lt;-</span> hotel_recipe  <span class="sc">%&gt;%</span> </span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_dummy</span>(<span class="fu">all_nominal_predictors</span>()) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -290,7 +289,7 @@ Action
 </section>
 <section id="cross-validation-setup" class="level2">
 <h2 class="anchored" data-anchor-id="cross-validation-setup">Cross-Validation Setup</h2>
-<p>“““BRIEFLY DESCRIBE WHAT CROSS_VALIDATION IS AND WHY WE USE IT”</p>
+<p>K-fold cross-validation is a statistical technique that helps assess a model’s ability to generalize. By <strong>partitioning</strong> the entire dataset in to <strong>k smaller sets</strong> and <strong>repeatedly train/evaluate</strong> the model on different sets, it ensures all data has a chance of appearing in the training and evaluation set. As a result, the assessment of the model would be much <strong>more robust</strong>, since it is almost impossible for a model that overfits to perform well in all folds.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 10-fold Cross validation</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>hotel_folds <span class="ot">&lt;-</span> <span class="fu">vfold_cv</span>(hotel_train, <span class="at">v =</span> <span class="dv">10</span>, <span class="at">strata =</span> booking_status)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -319,7 +318,7 @@ Action
 <hr>
 <p>Now let’s implement a basic decision tree. <code>decision_tree()</code> defines a model as a set of if/then statements that creates a tree-based structure.</p>
 <p>- <code>set_mode()</code> specifies the type of problem we are handling</p>
-<p>- <code>set_engine()</code> specifies the type of package/system used to fit the model later</p>
+<p>- <code>set_engine()</code> specifies the type of package/system used to fit the model later.</p>
 <p>- <code>set_args()</code> specifies the values of arguments of <code>decision_tree()</code>; here we set the depth of the tree to be in the range of [1, 15].</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the model (Decision Tree)</span></span>
@@ -335,7 +334,7 @@ Action
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_recipe</span>(hotel_recipe) <span class="sc">%&gt;%</span></span>
 <span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_model</span>(dt_model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Use fit_resamples() to fit multiple models on the cross-validation folds we created earlier. - use “metrics =” to specify what to keep track for each model’s performance evaluation.</p>
+<p>Use <code>fit_resamples()</code> to fit multiple models on the cross-validation folds we created earlier. - use “metrics =” to specify what to keep track for each model’s performance evaluation.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># fit the model</span></span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>hotel_results_dt <span class="ot">&lt;-</span> <span class="fu">fit_resamples</span>(</span>
@@ -416,19 +415,22 @@ Action
 </section>
 <section id="random-forest-and-ensemble-models" class="level3">
 <h3 class="anchored" data-anchor-id="random-forest-and-ensemble-models">Random Forest and Ensemble models</h3>
-<p>“““DESCRIPTION OF RANDOM FOREST - TO BE COMPLETED”</p>
+<p>The Random Forest algorithm is <strong>an ensemble learning method</strong>, primarily used for classification and regression. It constructs a multitude of decision trees at training time. The fundamental concept is simple: combine the predictions from multiple decision trees to produce a more accurate prediction than a single decision tree.</p>
+<p>Each tree in a random forest is built from <strong>a sample drawn with replacement (bootstrap sample)</strong> from the training set. Furthermore, when splitting a node during the construction of the tree, the split is chosen from <strong>a random subset of the features</strong>, rather than the best split among all features. This strategy of ‘bagging’ and feature randomness introduces diversity among the trees, ultimately leading to a <strong>more robust</strong> overall prediction and <strong>reducing the risk of overfitting</strong>.</p>
+<p>Additionally, random forests provide a measure of <strong>feature importance</strong>, which can be insightful for understanding the predictive power of individual features in the model; the algorithm can be <strong>parallelized</strong> for execution because each tree in the forest is built independently of the others, which makes the algorithm well-suited for modern multi-processor computers; it does <strong>not require feature scaling</strong> (like standardization or normalization) before input, as it does not rely on distance calculations.</p>
 <hr>
 <p>Use <code>rand_forest()</code> to implement a random forest model. Similar to the decision tree model we implemented earlier, use <code>set_mode()</code> and <code>set_engine()</code> to complete our model definition.</p>
 <p>There is a couple of parameters you can play around with:</p>
-<p>- mtry: the number of random sampled predictors used for each split</p>
-<p>- trees: number of trees</p>
-<p>- min_n: minimum number of data needed in a node to split further into two branches.</p>
+<p>- <code>mtry</code>: the number of random sampled predictors used for each split</p>
+<p>- <code>trees</code>: number of trees</p>
+<p>- <code>min_n</code>: minimum number of data needed in a node to split further into two branches.</p>
+<p>There are several ways to determine the best way to split when building a tree. the ranger engine allows us to specify it. We set <code>importance = impurity</code> in <code>set_engine()</code>, so that the engine used gini index to determine how to split.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>rf_model <span class="ot">&lt;-</span> <span class="fu">rand_forest</span>(<span class="at">mtry =</span> <span class="dv">10</span>,</span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>                        <span class="at">trees =</span> <span class="dv">10</span>, </span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>                        <span class="at">min_n =</span> <span class="dv">10</span>) <span class="sc">%&gt;%</span> </span>
 <span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_mode</span>(<span class="st">"classification"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_engine</span>(<span class="st">"ranger"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_engine</span>(<span class="st">"ranger"</span>, <span class="at">importance =</span> <span class="st">"impurity"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Again, combine the model and recipe into a workflow.</p>
 <div class="cell">
@@ -436,7 +438,7 @@ Action
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_model</span>(rf_model) <span class="sc">%&gt;%</span> </span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_recipe</span>(hotel_recipe)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Fit the model using fit_resamples(). You will notice this time it takes longer for the model to fit.</p>
+<p>Fit the model using <code>fit_resamples()</code>. You will notice this time it takes longer for the model to fit.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># fit the model</span></span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>hotel_results_rf <span class="ot">&lt;-</span> <span class="fu">fit_resamples</span>(</span>
@@ -510,65 +512,105 @@ Action
 </div>
 </section>
 </section>
-<section id="hyperparameters-tuning" class="level2">
-<h2 class="anchored" data-anchor-id="hyperparameters-tuning">Hyperparameters Tuning</h2>
-<section id="random-forest-parameters-overview" class="level3">
-<h3 class="anchored" data-anchor-id="random-forest-parameters-overview">Random Forest Parameters overview</h3>
+<section id="hyper-parameters-tuning" class="level2">
+<h2 class="anchored" data-anchor-id="hyper-parameters-tuning">Hyper-parameters Tuning</h2>
+<p>As you notice in the last section, a few adjustment in the model parameters may result in big difference in its final performance.</p>
+<p>In a random forest model, there is a couple of important hyper-parameters to tune:</p>
+<details>
+<summary>
+Overview of some common hyper-paremeters
+</summary>
+<p>Number of Variables per split (mtry): This is the number of variables to possibly split at each node. Higher values more likely result in overfitting.</p>
+<p>Number of Trees (trees): This is the number of trees in the forest. Generally, more trees increase model performance and make the model more robust, but also increase computational cost.</p>
+<p>Maximum Depth of Trees (max_depth): This determines the maximum depth of each tree. Deeper trees can model more complex patterns, but they can also lead to overfitting. When there is a minimum number of samples required to split a node, you may set this to None.</p>
+<p>Minimum Samples Split (min_n): This is the minimum number of samples required to split an internal node. Higher values prevent creating nodes that might overfit to your data.</p>
+<p>Criterion (importance): The function to measure the quality of a split. Supported criteria are “impurity” for the Gini impurity and “none” for the information gain.</p>
+<p>Class Weight (class.weight): This parameter is used to balance the dataset. It’s especially important when dealing with imbalanced datasets</p>
+</details>
+<p>In this section we will learn how to use grid to search for the best parameter combination. For simplicity we only focus on three parameters: <code>mtry</code>, <code>trees</code>, and <code>min_n</code>.</p>
+<p>First we need to create another model using <code>tune()</code> as placeholders for parameter values.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the model (Random Forest)</span></span>
 <span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>rf_model_tune <span class="ot">&lt;-</span> <span class="fu">rand_forest</span>(<span class="at">mtry =</span> <span class="fu">tune</span>(), <span class="do">## number of random sampled predictors used for each split</span></span>
 <span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>                             <span class="at">trees =</span> <span class="fu">tune</span>(), <span class="do">## number of trees</span></span>
 <span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>                             <span class="at">min_n =</span> <span class="fu">tune</span>()) <span class="sc">%&gt;%</span> <span class="do">## minimum number of data points needed in a node to split</span></span>
 <span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_mode</span>(<span class="st">"classification"</span>) <span class="sc">%&gt;%</span> <span class="do">## type of tasks</span></span>
-<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_engine</span>(<span class="st">"ranger"</span>) <span class="do">## type of engine used to fit the model</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_engine</span>(<span class="st">"ranger"</span>, <span class="at">importance =</span> <span class="st">"impurity"</span>) <span class="do">## type of engine used to fit the model</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-</section>
-<section id="grid" class="level3">
-<h3 class="anchored" data-anchor-id="grid">Grid</h3>
+<p>Next, create a grid that specifies the range of values each parameter may hold. <code>levels</code> indicates how many values from the range will be selected. The selected values would divide each range into equal intervals.</p>
+<p>For example, a grid with three tuning parameters and three levels will have 3^3 combinations of parameter lists. 3^3 models will be fitted, each corresponding to a combination of parameters.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>rf_grid <span class="ot">&lt;-</span> <span class="fu">grid_regular</span>(</span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mtry</span>(<span class="fu">c</span>(<span class="dv">10</span>, <span class="dv">14</span>)),</span>
-<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">trees</span>(<span class="fu">c</span>(<span class="dv">100</span>, <span class="dv">150</span>)),</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mtry</span>(<span class="fu">c</span>(<span class="dv">5</span>, <span class="dv">16</span>)),</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">trees</span>(<span class="fu">c</span>(<span class="dv">50</span>, <span class="dv">100</span>)),</span>
 <span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">min_n</span>(<span class="fu">c</span>(<span class="dv">10</span>, <span class="dv">20</span>)),</span>
 <span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">levels =</span> <span class="dv">3</span></span>
-<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a><span class="co"># combine the model and the dataset to a workflow</span></span>
-<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>rf_wf_tune <span class="ot">&lt;-</span> <span class="fu">workflow</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_model</span>(rf_model_tune) <span class="sc">%&gt;%</span> </span>
-<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_recipe</span>(hotel_recipe)</span>
-<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a><span class="co">#hotel_results_rf_tune &lt;- tune_grid(</span></span>
-<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a><span class="co">#  rf_wf_tune,</span></span>
-<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a><span class="co">#  resamples = hotel_folds,</span></span>
-<span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a><span class="co">#  grid = rf_grid)</span></span>
-<span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-18"><a href="#cb27-18" aria-hidden="true" tabindex="-1"></a><span class="co">#show_best(hotel_results_rf_tune, metric = "roc_auc")</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>best_params &lt;- select_best(hotel_results_rf_tune, metric = “accuracy”) rf_final_workflow_train &lt;- finalize_workflow(rf_wf_tune, best_params) rf_final_fit_train &lt;- fit(rf_final_workflow_train, data = hotel_train) rf_final_test &lt;- augment(rf_final_fit_train, hotel_test) %&gt;% select(booking_status, starts_with(“.pred”))</p>
-<p>predictions &lt;- rf_final_test %&gt;% select(booking_status, .pred_class, .pred_Canceled)</p>
-</section>
-</section>
-</section>
-<section id="calculate-sensitivity-and-specificity" class="level1">
-<h1>Calculate Sensitivity and Specificity</h1>
-<p>sensitivity_val &lt;- predictions %&gt;% sens(truth = booking_status, estimate = .pred_class) specificity_val &lt;- predictions %&gt;% spec(truth = booking_status, estimate = .pred_class)</p>
-</section>
-<section id="calculate-accuracy" class="level1">
-<h1>Calculate Accuracy</h1>
-<p>accuracy_val &lt;- predictions %&gt;% accuracy(truth = booking_status, estimate = .pred_class)</p>
-</section>
-<section id="calculate-roc-auc" class="level1">
-<h1>Calculate ROC AUC</h1>
-</section>
-<section id="assuming-.pred_yes-is-the-predicted-probability-for-the-yes-class" class="level1">
-<h1>Assuming .pred_Yes is the predicted probability for the “Yes” class</h1>
-<p>roc_auc_val &lt;- predictions %&gt;% roc_auc(truth = booking_status, .pred_Canceled)</p>
-</section>
-<section id="create-a-new-variable-to-store-the-metrics" class="level1">
-<h1>Create a new variable to store the metrics</h1>
-<p>model_metrics &lt;- tibble( Sensitivity = sensitivity_val<span class="math inline">\(.estimate, Specificity = specificity_val\)</span>.estimate, Accuracy = accuracy_val<span class="math inline">\(.estimate, ROC_AUC = roc_auc_val\)</span>.estimate )</p>
-<p>model_metrics</p>
+<p>Create a workflow as usual, but use <code>tune_grid(..., grid = )</code> to fit the model this time.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># combine the model and the dataset to a workflow</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>rf_wf_tune <span class="ot">&lt;-</span> <span class="fu">workflow</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_model</span>(rf_model_tune) <span class="sc">%&gt;%</span> </span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_recipe</span>(hotel_recipe)</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>hotel_results_rf_tune <span class="ot">&lt;-</span> <span class="fu">tune_grid</span>(</span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>  rf_wf_tune,</span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">resamples =</span> hotel_folds,</span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">grid =</span> rf_grid)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><code>show_best()</code> will show the best models out of all 27 and their performance metrics.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">show_best</span>(hotel_results_rf_tune, <span class="at">metric =</span> <span class="st">"roc_auc"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 5 × 9
+   mtry trees min_n .metric .estimator  mean     n std_err .config              
+  &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;chr&gt;   &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;                
+1    16   100    20 roc_auc binary     0.880    10 0.00126 Preprocessor1_Model27
+2    16    75    20 roc_auc binary     0.880    10 0.00130 Preprocessor1_Model24
+3    16   100    15 roc_auc binary     0.880    10 0.00126 Preprocessor1_Model18
+4    10   100    10 roc_auc binary     0.879    10 0.00128 Preprocessor1_Model08
+5    16    50    20 roc_auc binary     0.879    10 0.00128 Preprocessor1_Model21</code></pre>
+</div>
+</div>
+<p>The <code>std_err()</code> column shows us that there is no sign of overfitting.</p>
+<p>Before we proceed to augment the testing set, first we need to select the best model out of all 27 models, and finalize the workflow with the best parameter list.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>best_params <span class="ot">&lt;-</span> <span class="fu">select_best</span>(hotel_results_rf_tune, <span class="at">metric =</span> <span class="st">"accuracy"</span>) </span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>rf_final_workflow_train <span class="ot">&lt;-</span> <span class="fu">finalize_workflow</span>(rf_wf_tune, best_params) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now we can repeat the evaluation process</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>rf_final_fit_train <span class="ot">&lt;-</span> <span class="fu">fit</span>(rf_final_workflow_train, <span class="at">data =</span> hotel_train) </span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>rf_final_test <span class="ot">&lt;-</span> <span class="fu">augment</span>(rf_final_fit_train, hotel_test) <span class="sc">%&gt;%</span> </span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(booking_status, <span class="fu">starts_with</span>(<span class="st">".pred"</span>))</span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>predictions <span class="ot">&lt;-</span> rf_final_test <span class="sc">%&gt;%</span> </span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(booking_status, .pred_class, .pred_Canceled)</span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>sensitivity_val <span class="ot">&lt;-</span> predictions <span class="sc">%&gt;%</span> <span class="fu">sens</span>(<span class="at">truth =</span> booking_status, <span class="at">estimate =</span> .pred_class) </span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>specificity_val <span class="ot">&lt;-</span> predictions <span class="sc">%&gt;%</span> <span class="fu">spec</span>(<span class="at">truth =</span> booking_status, <span class="at">estimate =</span> .pred_class)</span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a>accuracy_val <span class="ot">&lt;-</span> predictions <span class="sc">%&gt;%</span> <span class="fu">accuracy</span>(<span class="at">truth =</span> booking_status, <span class="at">estimate =</span> .pred_class)</span>
+<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a>roc_auc_val <span class="ot">&lt;-</span> predictions <span class="sc">%&gt;%</span> <span class="fu">roc_auc</span>(<span class="at">truth =</span> booking_status, .pred_Canceled)</span>
+<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-13"><a href="#cb32-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a new variable to store the metrics</span></span>
+<span id="cb32-14"><a href="#cb32-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-15"><a href="#cb32-15" aria-hidden="true" tabindex="-1"></a>model_metrics <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb32-16"><a href="#cb32-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">.metric =</span> <span class="fu">c</span>(<span class="st">"accuracy"</span>, <span class="st">"roc_auc"</span>, <span class="st">"sensitivity"</span>, <span class="st">"specificity"</span>),</span>
+<span id="cb32-17"><a href="#cb32-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">test =</span> <span class="fu">c</span>(accuracy_val<span class="sc">$</span>.estimate, roc_auc_val<span class="sc">$</span>.estimate, sensitivity_val<span class="sc">$</span>.estimate, specificity_val<span class="sc">$</span>.estimate)</span>
+<span id="cb32-18"><a href="#cb32-18" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb32-19"><a href="#cb32-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-20"><a href="#cb32-20" aria-hidden="true" tabindex="-1"></a>model_metrics</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 4 × 2
+  .metric      test
+  &lt;chr&gt;       &lt;dbl&gt;
+1 accuracy    0.822
+2 roc_auc     0.881
+3 sensitivity 0.666
+4 specificity 0.897</code></pre>
+</div>
+</div>
 <div class="callout-important callout callout-style-default callout-captioned">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -582,43 +624,23 @@ Action
 <p>Try to tune other parameters of the Random Forest model using a grid to see if the results change. Is there a better model performance?</p>
 </div>
 </div>
+</section>
 <section id="understanding-the-random-forest-model" class="level2">
 <h2 class="anchored" data-anchor-id="understanding-the-random-forest-model">Understanding the Random Forest model</h2>
 <section id="features-importance" class="level3">
 <h3 class="anchored" data-anchor-id="features-importance">Features Importance</h3>
-<p>```</p>
-<p>/* Description /* Sample code ```</p>
-<blockquote class="blockquote">
-<p>Random Forest Algorithm widespread popularity stems from its user-friendly nature and adaptability, enabling it to tackle both classification and regression problems effectively. The algorithm’s strength lies in its ability to handle complex datasets and mitigate overfitting, making it a valuable tool for various predictive tasks in machine learning.</p>
-</blockquote>
-<blockquote class="blockquote">
-<p>One of the most important features of the Random Forest Algorithm is that it can handle the data set containing <strong>continuous variables</strong>, as in the case of <strong>regression</strong>, and <strong>categorical variables</strong>, as in the case of <strong>classification</strong>. It performs better for classification and regression tasks. In this tutorial, we will understand the working of random forest and implement random forest on a classification task.</p>
-</blockquote>
+</section>
+<section id="drafts" class="level3">
+<h3 class="anchored" data-anchor-id="drafts">DRAFTS</h3>
+<hr>
 <p><img src="image/img-rfsimplified.png" class="img-fluid"></p>
-<section id="steps-involved-in-random-forest-algorithm" class="level4">
-<h4 class="anchored" data-anchor-id="steps-involved-in-random-forest-algorithm">Steps Involved in Random Forest Algorithm</h4>
+<p>Steps Involved in Random Forest Algorithm</p>
 <ul>
 <li>Step 1：In the Random forest model, a subset of data points and a subset of features is selected for constructing each decision tree. Simply put, n random records and m features are taken from the data set having k number of records.</li>
 <li>Step 2：Individual decision trees are constructed for each sample.</li>
 <li>Step 3：Each decision tree will generate an output.</li>
 <li>Step 4：Final output is considered based on <strong><em>Majority Voting or Averaging</em></strong> for Classification and regression, respectively.</li>
 </ul>
-</section>
-<section id="important-features-of-random-forest" class="level4">
-<h4 class="anchored" data-anchor-id="important-features-of-random-forest">Important Features of Random Forest</h4>
-<ul>
-<li><p><strong>Ensemble of Decision Trees：</strong> Random Forest is an ensemble learning method, which means it combines the predictions from multiple machine learning algorithms to make more accurate predictions than any individual model. Specifically, it builds multiple decision trees and merges them together to get a more accurate and stable prediction.</p></li>
-<li><p><strong>Handling of Both Categorical and Numerical Features：</strong>It can handle a mix of categorical and numerical features. There is no need to pre-process data to convert categorical features to numerical features.</p></li>
-<li><p><strong>Feature Importance：</strong>One of the useful outputs of Random Forest is the importance or contribution of each feature in the prediction. This helps in understanding the data better and can be used for feature selection.</p></li>
-<li><p><strong>Avoids Overfitting：</strong> Due to the way it constructs the decision trees (using a subset of features and samples), it generally does a good job of avoiding overfitting, especially compared to individual decision trees.</p></li>
-<li><p><strong>No Need for Future Scaling：</strong>Random Forest does not require feature scaling (like standardization or normalization) before input, as it does not rely on distance calculations.</p></li>
-<li><p><strong>Handles Missing Values:</strong> It can handle missing values in the data, though the way it does this can vary depending on the implementation.</p></li>
-<li><p><strong>Robust to Outliers:</strong> It is generally robust to outliers and can handle them better than many other algorithms.</p></li>
-<li><p><strong>Good for Large Datasets：</strong>It can handle large datasets with higher dimensionality (many features) and can evaluate the importance of different features for the classification/regression tasks.</p></li>
-<li><p><strong>Versatility in Performance Metrics：</strong> It supports various metrics for evaluating the performance suitable for different types of problems (classification, regression)</p></li>
-<li><p><strong>Parallelizable：</strong> The algorithm can be parallelized for execution because each tree in the forest is built independently of the others, which makes the algorithm well-suited for modern multi-processor computers.</p></li>
-</ul>
-</section>
 </section>
 </section>
 </section>

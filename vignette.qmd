@@ -3,7 +3,7 @@ title: "vignette.qmd"
 format: html
 editor: visual
 date: today
-author: Mindy Xu, Zoe Zhou, Amy Lyu, Jerry Huang
+author: Mindy Xu, Zoe Zhou, Amy Lyu, Jiashu Huang
 ---
 
 # Random Forest Vignette
@@ -28,11 +28,11 @@ Here we have a introductory video for you to better know what is Random Forest.
 
 ### Data Description
 
-```         
 This dataset is obtained from kaggle. There are 19 predictors in this data set. Booking status is the target varibale, indicating whether the reservation was canceled or not (binary: 2 values). There are 36275 observations in total. The goal of predicting hotel reservations is to forecast the number of bookings a hotel will receive for a specific date range, based on historical data and other relevant factors such as seasonality, market trends, and pricing strategies.
-```
 
-#### Data Dictionary
+<details>
+
+<summary>Data Dictionary</summary>
 
 -   Booking_ID: unique identifier of each booking
 
@@ -72,41 +72,54 @@ This dataset is obtained from kaggle. There are 19 predictors in this data set. 
 
 -   booking_status: Flag indicating if the booking was canceled or not.
 
-### Load Packages and data
+</details>
 
-```{r results='hide', message=FALSE}
-# loading packages
+### Load Packages and Data
+
+```{r results='hide', message=FALSE, warning = FALSE}
+# load packages
 library(tidyverse)
 library(dplyr)
 library(tidymodels)
 library(janitor) ## clean_names()
 library(ranger) ## random forest model engine
 
-# loading the data
+# load data
 hotel <- read.csv("data/HotelReservations.csv")
 ```
 
 ### Preprocess the data
 
+Before implementing the model, we need to make sure the dataset is ready for use. First, change variable names to a unified format. They will contain only "\_", numbers, and letters.
+
 ```{r}
 # cleaning predictor names
 hotel <- clean_names(hotel)
-
-# summarize data
-summary(hotel) # Categorical variables are stored in "character" variables
-
-# Convert characters to factors and rename factor levels
-hotel<- data.frame(lapply(hotel, factor))
-summary(hotel)
 ```
 
-::: {.callout-note style="background-color: #ffebee; color: black; border-left: 3px solid red;"}
+Now let's take a look at how our data is stored.
+
+```{r}
+# view data structure and display the first 8 variables
+str(hotel, vec.len = 2, list.len = 8)
+```
+
+Notice how the categorical variables are stored in character variables. We need to transform them into factors before we encode them into binary variables later.
+
+::: callout-important
 #### Action
 
-Turn other categorical variables into factors.
+Use lapply() to turn categorical variables into factors.
 :::
 
+```{r, echo=FALSE}
+# Convert characters to factors and rename factor levels
+hotel<- data.frame(lapply(hotel, factor))
+```
+
 ## Data Partition
+
+Split the dataset into a training and a testing set. Use "booking_status" as the stratification variable to ensure it has equivalent proportions in two sets.
 
 ```{r}
 set.seed(3435)
@@ -116,36 +129,56 @@ hotel_train <- training(hotel_split)
 hotel_test <- testing(hotel_split)
 ```
 
-::: {.callout-note style="background-color: #ffebee; color: black; border-left: 3px solid red;"}
+::: callout-important
 #### Action
 
-Try split the data with different stratification to see if the results change. Is there a better stratification? Check the dimension of training data and testing data to see if the data has been split correctly.
+Check the dimension of training data and testing data to see if the data has been split correctly.
 :::
 
 ## Preprocessing Recipe
 
+Now let's create a recipe for our dataset.
+
 ```{r}
 # Create a recipe for the dataset
-hotel_recipe <- 
-  recipe(booking_status ~., data = hotel_train) %>% 
-  step_other(all_predictors(), threshold = 0.05) %>% ## factor levels with an occurring frequency less than 0.05 would be pooled to "other"
-  step_dummy(all_nominal_predictors()) ## factors will be encoded to multiple binary variables corresponding to each level
+hotel_recipe <- recipe(booking_status ~., data = hotel_train) 
 ```
 
-## Cross-Valdation Setup
+Limit the amount of factor levels for each predictor using step_other(). Factor levels with an occurring frequency less than 0.05 would be pooled to "other".
+
+```{r}
+hotel_recipe <- hotel_recipe %>% 
+  step_other(all_predictors(), threshold = 0.05)
+```
+
+Using step_dummy(), encode factor variables to multiple binary variables which correspond to each factor level.
+
+```{r}
+hotel_recipe <- hotel_recipe  %>% 
+  step_dummy(all_nominal_predictors()) 
+```
+
+## Cross-Validation Setup
+"""BRIEFLY DESCRIBE WHAT CROSS_VALIDATION IS AND WHY WE USE IT"
 
 ```{r}
 # 10-fold Cross validation
 hotel_folds <- vfold_cv(hotel_train, v = 10, strata = booking_status)
 ```
 
+::: callout-important
 #### Action
 
-Try to change the folds number for the cross validation to see if the results change. :::
+Try to change the folds number for the cross validation to see if the results change.
+:::
 
 ## Intuition and Architecture
 
 ### Understanding Decision Trees
+
+""" DESCRIPTION OF DEICION TREES - TO BE COMPLETED"""
+
+Now let's implement a basic decision tree. decision_tree() defines a model as a set of if/then statements that creates a tree-based structure. - set_mode() specifies the type of problem we are handling - set_engine() specifies the type of package/system used to fit the model later - set_args() specifies the values of arguments of decition_tree(); here we set the depth of the tree to be in the range of \[1, 15\].
 
 ```{r}
 # Define the model (Decision Tree)
@@ -153,12 +186,20 @@ dt_model<-decision_tree() %>%
   set_mode("classification") %>% ## type of tasks
   set_engine("rpart") %>% ## type of engine used to fit the model
   set_args(tree_depth(c(1L, 15L))) ## Other parameters
+```
 
+Create a workflow object, set its recipe to hotel_recipe, and add dt_model as its model.
+
+```{r}
 # combine the model and the dataset to a workflow
 dt_wf <- workflow() %>%
   add_recipe(hotel_recipe) %>%
   add_model(dt_model)
+```
 
+Use fit_resamples() to fit multiple models on the cross-validation folds we created earlier. - use "metrics =" to specify what to keep track for each model's performance evaluation.
+
+```{r}
 # fit the model
 hotel_results_dt <- fit_resamples(
   dt_wf,
@@ -167,13 +208,7 @@ hotel_results_dt <- fit_resamples(
 )
 ```
 
-::: {.callout-note style="background-color: #ffebee; color: black; border-left: 3px solid red;"}
-#### Action
-
-Action for decision tree
-:::
-
-### Result for Decision Tree Model
+Let's see how this model performed.
 
 ```{r}
 # summarize the result
@@ -183,31 +218,46 @@ results_summary_dt <- hotel_results_dt %>%
 results_summary_dt
 ```
 
-### Random Forest and Ensemble models
+::: callout-important
+#### Action
 
+Play around with different parameters (engine, tree_depth, number of folds, etc) to see if you can achieve a higher performance.
+:::
+
+### Random Forest and Ensemble models
+"""DESCRIPTION OF RANDOM FOREST - TO BE COMPLETED"
+
+Use rand_forest() to implement a random forest model. Similar to the decision tree model we implemented earlier, use set_mode() and set_engine() to complete our model definition.
+
+There is a couple of parameters you can play around with:
+- mtry: the number of random sampled predictors used for each split
+- trees: number of trees
+- min_n: minimum number of data needed in a node to split further into two branches.
 ```{r}
-# Define the model (Random Forest)
-rf_model <- rand_forest(mtry = 15, ## number of random sampled predictors used for each split
-                        trees = 20, ## number of trees
-                        min_n = 10) %>% ## minimum number of data points needed in a node to split
+rf_model <- rand_forest(mtry = 15,
+                        trees = 20, 
+                        min_n = 10) %>% 
   set_mode("classification") %>% ## type of tasks
   set_engine("ranger") ## type of engine used to fit the model
-
-# combine the model and the dataset to a workflow
+```
+Again, combine the model and recipe into a workflow.
+```{r}
 rf_wf <- workflow() %>% 
   add_model(rf_model) %>% 
   add_recipe(hotel_recipe)
-
+```
+Fit the model using fit_resamples(). You will notice this time it takes longer for the model to fit.
+```{r}
 # fit the model
 hotel_results_rf <- fit_resamples(
   rf_wf,
-  resamples = hotel_folds, ## cross-validation
+  resamples = hotel_folds,
   metrics = metric_set(roc_auc, accuracy, sensitivity, specificity) ## metrics to keep track on
 )
 
 ```
 
-::: {.callout-note style="background-color: #ffebee; color: black; border-left: 3px solid red;"}
+::: {.callout-important style="background-color: #ffebee; color: black; border-left: 3px solid red;"}
 #### Action
 
 Try altering the number of trees or the max depths of the trees to see if the results change. Is there a better model performance?
@@ -252,15 +302,15 @@ rf_wf_tune <- workflow() %>%
   add_model(rf_model_tune) %>% 
   add_recipe(hotel_recipe)
 
-hotel_results_rf_tune <- tune_grid(
-  rf_wf_tune,
-  resamples = hotel_folds,
-  grid = rf_grid)
+#hotel_results_rf_tune <- tune_grid(
+#  rf_wf_tune,
+#  resamples = hotel_folds,
+#  grid = rf_grid)
 
-show_best(hotel_results_rf_tune, metric = "roc_auc")
+#show_best(hotel_results_rf_tune, metric = "roc_auc")
 ```
 
-::: {.callout-note style="background-color: #ffebee; color: black; border-left: 3px solid red;"}
+::: {.callout-important style="background-color: #ffebee; color: black; border-left: 3px solid red;"}
 #### Action
 
 Try to tune other parameters of the Random Forest model using a grid to see if the results change. Is there a better model performance?

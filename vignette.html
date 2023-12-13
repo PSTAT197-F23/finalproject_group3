@@ -2,11 +2,11 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.3.433">
+<meta name="generator" content="quarto-1.2.335">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="author" content="Mindy Xu, Zoe Zhou, Amy Lyu, Jerry Huang">
+<meta name="author" content="Mindy Xu, Zoe Zhou, Amy Lyu, Jiashu Huang">
 <meta name="dcterms.date" content="2023-12-12">
 
 <title>vignette.qmd</title>
@@ -19,10 +19,9 @@ div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 ul.task-list{list-style: none;}
 ul.task-list li input[type="checkbox"] {
   width: 0.8em;
-  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  margin: 0 0.8em 0.2em -1.6em;
   vertical-align: middle;
 }
-/* CSS for syntax highlighting */
 pre > code.sourceCode { white-space: pre; position: relative; }
 pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
@@ -49,13 +48,43 @@ pre.numberSource code > span > a:first-child::before
     -khtml-user-select: none; -moz-user-select: none;
     -ms-user-select: none; user-select: none;
     padding: 0 4px; width: 4em;
+    color: #aaaaaa;
   }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
 div.sourceCode
   {   }
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
 </style>
 
 
@@ -91,7 +120,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Author</div>
     <div class="quarto-title-meta-contents">
-             <p>Mindy Xu, Zoe Zhou, Amy Lyu, Jerry Huang </p>
+             <p>Mindy Xu, Zoe Zhou, Amy Lyu, Jiashu Huang </p>
           </div>
   </div>
     
@@ -130,9 +159,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="anchored" data-anchor-id="example-data-hotel-reservation-data-to-implement">Example Data – Hotel Reservation Data to Implement</h2>
 <section id="data-description" class="level3">
 <h3 class="anchored" data-anchor-id="data-description">Data Description</h3>
-<pre><code>This dataset is obtained from kaggle. There are 19 predictors in this data set. Booking status is the target varibale, indicating whether the reservation was canceled or not (binary: 2 values). There are 36275 observations in total. The goal of predicting hotel reservations is to forecast the number of bookings a hotel will receive for a specific date range, based on historical data and other relevant factors such as seasonality, market trends, and pricing strategies.</code></pre>
-<section id="data-dictionary" class="level4">
-<h4 class="anchored" data-anchor-id="data-dictionary">Data Dictionary</h4>
+<p>This dataset is obtained from kaggle. There are 19 predictors in this data set. Booking status is the target varibale, indicating whether the reservation was canceled or not (binary: 2 values). There are 36275 observations in total. The goal of predicting hotel reservations is to forecast the number of bookings a hotel will receive for a specific date range, based on historical data and other relevant factors such as seasonality, market trends, and pricing strategies.</p>
+<details>
+<summary>
+Data Dictionary
+</summary>
 <ul>
 <li><p>Booking_ID: unique identifier of each booking</p></li>
 <li><p>no_of_adults: Number of adults</p></li>
@@ -154,232 +185,164 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li><p>no_of_special_requests: Total number of special requests made by the customer (e.g.&nbsp;high floor, view from the room, etc)</p></li>
 <li><p>booking_status: Flag indicating if the booking was canceled or not.</p></li>
 </ul>
-</section>
+</details>
 </section>
 <section id="load-packages-and-data" class="level3">
-<h3 class="anchored" data-anchor-id="load-packages-and-data">Load Packages and data</h3>
+<h3 class="anchored" data-anchor-id="load-packages-and-data">Load Packages and Data</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># loading packages</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidymodels)</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(janitor) <span class="do">## clean_names()</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ranger) <span class="do">## random forest model engine</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co"># loading the data</span></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>hotel <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"data/HotelReservations.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># load packages</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidymodels)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(janitor) <span class="do">## clean_names()</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ranger) <span class="do">## random forest model engine</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># load data</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>hotel <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"data/HotelReservations.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="preprocess-the-data" class="level3">
 <h3 class="anchored" data-anchor-id="preprocess-the-data">Preprocess the data</h3>
+<p>Before implementing the model, we need to make sure the dataset is ready for use. First, change variable names to a unified format. They will contain only “_”, numbers, and letters.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># cleaning predictor names</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>hotel <span class="ot">&lt;-</span> <span class="fu">clean_names</span>(hotel)</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co"># summarize data</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(hotel) <span class="co"># Categorical variables are stored in "character" variables</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># cleaning predictor names</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>hotel <span class="ot">&lt;-</span> <span class="fu">clean_names</span>(hotel)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now let’s take a look at how our data is stored.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># view data structure and display the first 8 variables</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(hotel, <span class="at">vec.len =</span> <span class="dv">2</span>, <span class="at">list.len =</span> <span class="dv">8</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>  booking_id         no_of_adults   no_of_children    no_of_weekend_nights
- Length:36275       Min.   :0.000   Min.   : 0.0000   Min.   :0.0000      
- Class :character   1st Qu.:2.000   1st Qu.: 0.0000   1st Qu.:0.0000      
- Mode  :character   Median :2.000   Median : 0.0000   Median :1.0000      
-                    Mean   :1.845   Mean   : 0.1053   Mean   :0.8107      
-                    3rd Qu.:2.000   3rd Qu.: 0.0000   3rd Qu.:2.0000      
-                    Max.   :4.000   Max.   :10.0000   Max.   :7.0000      
- no_of_week_nights type_of_meal_plan  required_car_parking_space
- Min.   : 0.000    Length:36275       Min.   :0.00000           
- 1st Qu.: 1.000    Class :character   1st Qu.:0.00000           
- Median : 2.000    Mode  :character   Median :0.00000           
- Mean   : 2.204                       Mean   :0.03099           
- 3rd Qu.: 3.000                       3rd Qu.:0.00000           
- Max.   :17.000                       Max.   :1.00000           
- room_type_reserved   lead_time       arrival_year  arrival_month   
- Length:36275       Min.   :  0.00   Min.   :2017   Min.   : 1.000  
- Class :character   1st Qu.: 17.00   1st Qu.:2018   1st Qu.: 5.000  
- Mode  :character   Median : 57.00   Median :2018   Median : 8.000  
-                    Mean   : 85.23   Mean   :2018   Mean   : 7.424  
-                    3rd Qu.:126.00   3rd Qu.:2018   3rd Qu.:10.000  
-                    Max.   :443.00   Max.   :2018   Max.   :12.000  
-  arrival_date  market_segment_type repeated_guest   
- Min.   : 1.0   Length:36275        Min.   :0.00000  
- 1st Qu.: 8.0   Class :character    1st Qu.:0.00000  
- Median :16.0   Mode  :character    Median :0.00000  
- Mean   :15.6                       Mean   :0.02564  
- 3rd Qu.:23.0                       3rd Qu.:0.00000  
- Max.   :31.0                       Max.   :1.00000  
- no_of_previous_cancellations no_of_previous_bookings_not_canceled
- Min.   : 0.00000             Min.   : 0.0000                     
- 1st Qu.: 0.00000             1st Qu.: 0.0000                     
- Median : 0.00000             Median : 0.0000                     
- Mean   : 0.02335             Mean   : 0.1534                     
- 3rd Qu.: 0.00000             3rd Qu.: 0.0000                     
- Max.   :13.00000             Max.   :58.0000                     
- avg_price_per_room no_of_special_requests booking_status    
- Min.   :  0.00     Min.   :0.0000         Length:36275      
- 1st Qu.: 80.30     1st Qu.:0.0000         Class :character  
- Median : 99.45     Median :0.0000         Mode  :character  
- Mean   :103.42     Mean   :0.6197                           
- 3rd Qu.:120.00     3rd Qu.:1.0000                           
- Max.   :540.00     Max.   :5.0000                           </code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert characters to factors and rename factor levels</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>hotel<span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="fu">lapply</span>(hotel, factor))</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(hotel)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>    booking_id    no_of_adults no_of_children no_of_weekend_nights
- INN00001:    1   0:  139      0 :33577       0      :16872       
- INN00002:    1   1: 7695      1 : 1618       1      : 9995       
- INN00003:    1   2:26108      2 : 1058       2      : 9071       
- INN00004:    1   3: 2317      3 :   19       3      :  153       
- INN00005:    1   4:   16      9 :    2       4      :  129       
- INN00006:    1                10:    1       5      :   34       
- (Other) :36269                               (Other):   21       
- no_of_week_nights    type_of_meal_plan required_car_parking_space
- 2      :11444     Meal Plan 1 :27835   0:35151                   
- 1      : 9488     Meal Plan 2 : 3305   1: 1124                   
- 3      : 7839     Meal Plan 3 :    5                             
- 4      : 2990     Not Selected: 5130                             
- 0      : 2387                                                    
- 5      : 1614                                                    
- (Other):  513                                                    
-   room_type_reserved   lead_time     arrival_year arrival_month  
- Room_Type 1:28130    0      : 1297   2017: 6514   10     : 5317  
- Room_Type 2:  692    1      : 1078   2018:29761   9      : 4611  
- Room_Type 3:    7    2      :  643                8      : 3813  
- Room_Type 4: 6057    3      :  630                6      : 3203  
- Room_Type 5:  265    4      :  628                12     : 3021  
- Room_Type 6:  966    5      :  577                11     : 2980  
- Room_Type 7:  158    (Other):31422                (Other):13330  
-  arrival_date      market_segment_type repeated_guest
- 13     : 1358   Aviation     :  125    0:35345       
- 17     : 1345   Complementary:  391    1:  930       
- 2      : 1331   Corporate    : 2017                  
- 4      : 1327   Offline      :10528                  
- 19     : 1327   Online       :23214                  
- 16     : 1306                                        
- (Other):28281                                        
- no_of_previous_cancellations no_of_previous_bookings_not_canceled
- 0      :35937                0      :35463                       
- 1      :  198                1      :  228                       
- 2      :   46                2      :  112                       
- 3      :   43                3      :   80                       
- 11     :   25                4      :   65                       
- 5      :   11                5      :   60                       
- (Other):   15                (Other):  267                       
- avg_price_per_room no_of_special_requests      booking_status 
- 65     :  848      0:19777                Canceled    :11885  
- 75     :  826      1:11373                Not_Canceled:24390  
- 90     :  703      2: 4364                                    
- 95     :  669      3:  675                                    
- 115    :  662      4:   78                                    
- 120    :  612      5:    8                                    
- (Other):31955                                                 </code></pre>
+<pre><code>'data.frame':   36275 obs. of  19 variables:
+ $ booking_id                          : chr  "INN00001" "INN00002" ...
+ $ no_of_adults                        : int  2 2 1 2 2 ...
+ $ no_of_children                      : int  0 0 0 0 0 ...
+ $ no_of_weekend_nights                : int  1 2 2 0 1 ...
+ $ no_of_week_nights                   : int  2 3 1 2 1 ...
+ $ type_of_meal_plan                   : chr  "Meal Plan 1" "Not Selected" ...
+ $ required_car_parking_space          : int  0 0 0 0 0 ...
+ $ room_type_reserved                  : chr  "Room_Type 1" "Room_Type 1" ...
+  [list output truncated]</code></pre>
 </div>
 </div>
-<div class="callout callout-style-default callout-note callout-titled" style="background-color: #ffebee; color: black; border-left: 3px solid red;">
+<p>Notice how the categorical variables are stored in character variables. We need to transform them into factors before we encode them into binary variables later.</p>
+<div class="callout-important callout callout-style-default callout-captioned">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<div class="callout-title-container flex-fill">
+<div class="callout-caption-container flex-fill">
 Action
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Turn other categorical variables into factors.</p>
+<p>Use lapply() to turn categorical variables into factors.</p>
 </div>
+</div>
+<div class="cell">
+
 </div>
 </section>
 </section>
 <section id="data-partition" class="level2">
 <h2 class="anchored" data-anchor-id="data-partition">Data Partition</h2>
+<p>Split the dataset into a training and a testing set. Use “booking_status” as the stratification variable to ensure it has equivalent proportions in two sets.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">3435</span>)</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>hotel_split <span class="ot">&lt;-</span> <span class="fu">initial_split</span>(hotel, <span class="at">strata=</span></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>                                 <span class="st">"booking_status"</span>, <span class="at">prop =</span> <span class="fl">0.7</span>)</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>hotel_train <span class="ot">&lt;-</span> <span class="fu">training</span>(hotel_split)</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>hotel_test <span class="ot">&lt;-</span> <span class="fu">testing</span>(hotel_split)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">3435</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>hotel_split <span class="ot">&lt;-</span> <span class="fu">initial_split</span>(hotel, <span class="at">strata=</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>                                 <span class="st">"booking_status"</span>, <span class="at">prop =</span> <span class="fl">0.7</span>)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>hotel_train <span class="ot">&lt;-</span> <span class="fu">training</span>(hotel_split)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>hotel_test <span class="ot">&lt;-</span> <span class="fu">testing</span>(hotel_split)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="callout callout-style-default callout-note callout-titled" style="background-color: #ffebee; color: black; border-left: 3px solid red;">
+<div class="callout-important callout callout-style-default callout-captioned">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<div class="callout-title-container flex-fill">
+<div class="callout-caption-container flex-fill">
 Action
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Try split the data with different stratification to see if the results change. Is there a better stratification? Check the dimension of training data and testing data to see if the data has been split correctly.</p>
+<p>Check the dimension of training data and testing data to see if the data has been split correctly.</p>
 </div>
 </div>
 </section>
 <section id="preprocessing-recipe" class="level2">
 <h2 class="anchored" data-anchor-id="preprocessing-recipe">Preprocessing Recipe</h2>
+<p>Now let’s create a recipe for our dataset.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a recipe for the dataset</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>hotel_recipe <span class="ot">&lt;-</span> </span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">recipe</span>(booking_status <span class="sc">~</span>., <span class="at">data =</span> hotel_train) <span class="sc">%&gt;%</span> </span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_other</span>(<span class="fu">all_predictors</span>(), <span class="at">threshold =</span> <span class="fl">0.05</span>) <span class="sc">%&gt;%</span> <span class="do">## factor levels with an occurring frequency less than 0.05 would be pooled to "other"</span></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_dummy</span>(<span class="fu">all_nominal_predictors</span>()) <span class="do">## factors will be encoded to multiple binary variables corresponding to each level</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a recipe for the dataset</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>hotel_recipe <span class="ot">&lt;-</span> <span class="fu">recipe</span>(booking_status <span class="sc">~</span>., <span class="at">data =</span> hotel_train) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Limit the amount of factor levels for each predictor using step_other(). Factor levels with an occurring frequency less than 0.05 would be pooled to “other”.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>hotel_recipe <span class="ot">&lt;-</span> hotel_recipe <span class="sc">%&gt;%</span> </span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_other</span>(<span class="fu">all_predictors</span>(), <span class="at">threshold =</span> <span class="fl">0.05</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Using step_dummy(), encode factor variables to multiple binary variables which correspond to each factor level.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>hotel_recipe <span class="ot">&lt;-</span> hotel_recipe  <span class="sc">%&gt;%</span> </span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_dummy</span>(<span class="fu">all_nominal_predictors</span>()) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="cross-valdation-setup" class="level2">
-<h2 class="anchored" data-anchor-id="cross-valdation-setup">Cross-Valdation Setup</h2>
+<section id="cross-validation-setup" class="level2">
+<h2 class="anchored" data-anchor-id="cross-validation-setup">Cross-Validation Setup</h2>
+<p>“““BRIEFLY DESCRIBE WHAT CROSS_VALIDATION IS AND WHY WE USE IT”</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 10-fold Cross validation</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>hotel_folds <span class="ot">&lt;-</span> <span class="fu">vfold_cv</span>(hotel_train, <span class="at">v =</span> <span class="dv">10</span>, <span class="at">strata =</span> booking_status)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<section id="action-2" class="level4">
-<h4 class="anchored" data-anchor-id="action-2">Action</h4>
-<p>Try to change the folds number for the cross validation to see if the results change. :::</p>
-</section>
+<div class="callout-important callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Action
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Try to change the folds number for the cross validation to see if the results change.</p>
+</div>
+</div>
 </section>
 <section id="intuition-and-architecture" class="level2">
 <h2 class="anchored" data-anchor-id="intuition-and-architecture">Intuition and Architecture</h2>
 <section id="understanding-decision-trees" class="level3">
 <h3 class="anchored" data-anchor-id="understanding-decision-trees">Understanding Decision Trees</h3>
+<p>““” DESCRIPTION OF DEICION TREES - TO BE COMPLETED”“”</p>
+<p>Now let’s implement a basic decision tree. decision_tree() defines a model as a set of if/then statements that creates a tree-based structure. - set_mode() specifies the type of problem we are handling - set_engine() specifies the type of package/system used to fit the model later - set_args() specifies the values of arguments of decition_tree(); here we set the depth of the tree to be in the range of [1, 15].</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the model (Decision Tree)</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>dt_model<span class="ot">&lt;-</span><span class="fu">decision_tree</span>() <span class="sc">%&gt;%</span> </span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_mode</span>(<span class="st">"classification"</span>) <span class="sc">%&gt;%</span> <span class="do">## type of tasks</span></span>
 <span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_engine</span>(<span class="st">"rpart"</span>) <span class="sc">%&gt;%</span> <span class="do">## type of engine used to fit the model</span></span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_args</span>(<span class="fu">tree_depth</span>(<span class="fu">c</span>(1L, 15L))) <span class="do">## Other parameters</span></span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="co"># combine the model and the dataset to a workflow</span></span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>dt_wf <span class="ot">&lt;-</span> <span class="fu">workflow</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_recipe</span>(hotel_recipe) <span class="sc">%&gt;%</span></span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_model</span>(dt_model)</span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="co"># fit the model</span></span>
-<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>hotel_results_dt <span class="ot">&lt;-</span> <span class="fu">fit_resamples</span>(</span>
-<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>  dt_wf,</span>
-<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">resamples =</span> hotel_folds, <span class="do">## cross-validation</span></span>
-<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">metrics =</span> <span class="fu">metric_set</span>(roc_auc, accuracy, sensitivity, specificity) <span class="do">## metrics to keep track on</span></span>
-<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_args</span>(<span class="fu">tree_depth</span>(<span class="fu">c</span>(1L, 15L))) <span class="do">## Other parameters</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="callout callout-style-default callout-note callout-titled" style="background-color: #ffebee; color: black; border-left: 3px solid red;">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Action
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>Action for decision tree</p>
-</div>
-</div>
-</section>
-<section id="result-for-decision-tree-model" class="level3">
-<h3 class="anchored" data-anchor-id="result-for-decision-tree-model">Result for Decision Tree Model</h3>
+<p>Create a workflow object, set its recipe to hotel_recipe, and add dt_model as its model.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># summarize the result</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>results_summary_dt <span class="ot">&lt;-</span> hotel_results_dt <span class="sc">%&gt;%</span></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect_metrics</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">c</span>(<span class="st">".metric"</span>, <span class="st">"mean"</span>))</span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>results_summary_dt</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># combine the model and the dataset to a workflow</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>dt_wf <span class="ot">&lt;-</span> <span class="fu">workflow</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_recipe</span>(hotel_recipe) <span class="sc">%&gt;%</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_model</span>(dt_model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Use fit_resamples() to fit multiple models on the cross-validation folds we created earlier. - use “metrics =” to specify what to keep track for each model’s performance evaluation.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># fit the model</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>hotel_results_dt <span class="ot">&lt;-</span> <span class="fu">fit_resamples</span>(</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  dt_wf,</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">resamples =</span> hotel_folds, <span class="do">## cross-validation</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">metrics =</span> <span class="fu">metric_set</span>(roc_auc, accuracy, sensitivity, specificity) <span class="do">## metrics to keep track on</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Let’s see how this model performed.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># summarize the result</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>results_summary_dt <span class="ot">&lt;-</span> hotel_results_dt <span class="sc">%&gt;%</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect_metrics</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">c</span>(<span class="st">".metric"</span>, <span class="st">"mean"</span>))</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>results_summary_dt</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 4 × 2
   .metric      mean
@@ -390,39 +353,57 @@ Action
 4 specificity 0.896</code></pre>
 </div>
 </div>
-</section>
-<section id="random-forest-and-ensemble-models" class="level3">
-<h3 class="anchored" data-anchor-id="random-forest-and-ensemble-models">Random Forest and Ensemble models</h3>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the model (Random Forest)</span></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>rf_model <span class="ot">&lt;-</span> <span class="fu">rand_forest</span>(<span class="at">mtry =</span> <span class="dv">15</span>, <span class="do">## number of random sampled predictors used for each split</span></span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>                        <span class="at">trees =</span> <span class="dv">20</span>, <span class="do">## number of trees</span></span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>                        <span class="at">min_n =</span> <span class="dv">10</span>) <span class="sc">%&gt;%</span> <span class="do">## minimum number of data points needed in a node to split</span></span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_mode</span>(<span class="st">"classification"</span>) <span class="sc">%&gt;%</span> <span class="do">## type of tasks</span></span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_engine</span>(<span class="st">"ranger"</span>) <span class="do">## type of engine used to fit the model</span></span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="co"># combine the model and the dataset to a workflow</span></span>
-<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>rf_wf <span class="ot">&lt;-</span> <span class="fu">workflow</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_model</span>(rf_model) <span class="sc">%&gt;%</span> </span>
-<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_recipe</span>(hotel_recipe)</span>
-<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a><span class="co"># fit the model</span></span>
-<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>hotel_results_rf <span class="ot">&lt;-</span> <span class="fu">fit_resamples</span>(</span>
-<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>  rf_wf,</span>
-<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">resamples =</span> hotel_folds, <span class="do">## cross-validation</span></span>
-<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">metrics =</span> <span class="fu">metric_set</span>(roc_auc, accuracy, sensitivity, specificity) <span class="do">## metrics to keep track on</span></span>
-<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div class="callout callout-style-default callout-note callout-titled" style="background-color: #ffebee; color: black; border-left: 3px solid red;">
+<div class="callout-important callout callout-style-default callout-captioned">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<div class="callout-title-container flex-fill">
+<div class="callout-caption-container flex-fill">
 Action
 </div>
 </div>
 <div class="callout-body-container callout-body">
+<p>Play around with different parameters (engine, tree_depth, number of folds, etc) to see if you can achieve a higher performance.</p>
+</div>
+</div>
+</section>
+<section id="random-forest-and-ensemble-models" class="level3">
+<h3 class="anchored" data-anchor-id="random-forest-and-ensemble-models">Random Forest and Ensemble models</h3>
+<p>“““DESCRIPTION OF RANDOM FOREST - TO BE COMPLETED”</p>
+<p>Use rand_forest() to implement a random forest model. Similar to the decision tree model we implemented earlier, use set_mode() and set_engine() to complete our model definition.</p>
+<p>There is a couple of parameters you can play around with: - mtry: the number of random sampled predictors used for each split - trees: number of trees - min_n: minimum number of data needed in a node to split further into two branches.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>rf_model <span class="ot">&lt;-</span> <span class="fu">rand_forest</span>(<span class="at">mtry =</span> <span class="dv">15</span>,</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>                        <span class="at">trees =</span> <span class="dv">20</span>, </span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>                        <span class="at">min_n =</span> <span class="dv">10</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_mode</span>(<span class="st">"classification"</span>) <span class="sc">%&gt;%</span> <span class="do">## type of tasks</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_engine</span>(<span class="st">"ranger"</span>) <span class="do">## type of engine used to fit the model</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Again, combine the model and recipe into a workflow.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>rf_wf <span class="ot">&lt;-</span> <span class="fu">workflow</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_model</span>(rf_model) <span class="sc">%&gt;%</span> </span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_recipe</span>(hotel_recipe)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Fit the model using fit_resamples(). You will notice this time it takes longer for the model to fit.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># fit the model</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>hotel_results_rf <span class="ot">&lt;-</span> <span class="fu">fit_resamples</span>(</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  rf_wf,</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">resamples =</span> hotel_folds,</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">metrics =</span> <span class="fu">metric_set</span>(roc_auc, accuracy, sensitivity, specificity) <span class="do">## metrics to keep track on</span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="callout-important callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Action
+</div>
+</div>
+<div class="callout-body-container callout-body" style="background-color: #ffebee; color: black; border-left: 3px solid red;">
 <p>Try altering the number of trees or the max depths of the trees to see if the results change. Is there a better model performance?</p>
 </div>
 </div>
@@ -430,11 +411,11 @@ Action
 <section id="result-of-random-forest-model" class="level3">
 <h3 class="anchored" data-anchor-id="result-of-random-forest-model">Result of Random Forest Model</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># summarize the result</span></span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>results_summary_rf <span class="ot">&lt;-</span> hotel_results_rf <span class="sc">%&gt;%</span></span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect_metrics</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">c</span>(<span class="st">".metric"</span>, <span class="st">"mean"</span>))</span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>results_summary_rf</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># summarize the result</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>results_summary_rf <span class="ot">&lt;-</span> hotel_results_rf <span class="sc">%&gt;%</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect_metrics</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">c</span>(<span class="st">".metric"</span>, <span class="st">"mean"</span>))</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>results_summary_rf</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 4 × 2
   .metric      mean
@@ -452,56 +433,46 @@ Action
 <section id="random-forest-parameters-overview" class="level3">
 <h3 class="anchored" data-anchor-id="random-forest-parameters-overview">Random Forest Parameters overview</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the model (Random Forest)</span></span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>rf_model_tune <span class="ot">&lt;-</span> <span class="fu">rand_forest</span>(<span class="at">mtry =</span> <span class="fu">tune</span>(), <span class="do">## number of random sampled predictors used for each split</span></span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>                             <span class="at">trees =</span> <span class="fu">tune</span>(), <span class="do">## number of trees</span></span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>                             <span class="at">min_n =</span> <span class="fu">tune</span>()) <span class="sc">%&gt;%</span> <span class="do">## minimum number of data points needed in a node to split</span></span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_mode</span>(<span class="st">"classification"</span>) <span class="sc">%&gt;%</span> <span class="do">## type of tasks</span></span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_engine</span>(<span class="st">"ranger"</span>) <span class="do">## type of engine used to fit the model</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the model (Random Forest)</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>rf_model_tune <span class="ot">&lt;-</span> <span class="fu">rand_forest</span>(<span class="at">mtry =</span> <span class="fu">tune</span>(), <span class="do">## number of random sampled predictors used for each split</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>                             <span class="at">trees =</span> <span class="fu">tune</span>(), <span class="do">## number of trees</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>                             <span class="at">min_n =</span> <span class="fu">tune</span>()) <span class="sc">%&gt;%</span> <span class="do">## minimum number of data points needed in a node to split</span></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_mode</span>(<span class="st">"classification"</span>) <span class="sc">%&gt;%</span> <span class="do">## type of tasks</span></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_engine</span>(<span class="st">"ranger"</span>) <span class="do">## type of engine used to fit the model</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="gridcross-validation" class="level3">
 <h3 class="anchored" data-anchor-id="gridcross-validation">Grid/Cross-validation</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>rf_grid <span class="ot">&lt;-</span> <span class="fu">grid_regular</span>(</span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mtry</span>(<span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">18</span>)),</span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">trees</span>(<span class="fu">c</span>(<span class="dv">10</span>, <span class="dv">200</span>)),</span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">min_n</span>(<span class="fu">c</span>(<span class="dv">10</span>, <span class="dv">50</span>)),</span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">levels =</span> <span class="dv">3</span></span>
-<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a><span class="co"># combine the model and the dataset to a workflow</span></span>
-<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>rf_wf_tune <span class="ot">&lt;-</span> <span class="fu">workflow</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_model</span>(rf_model_tune) <span class="sc">%&gt;%</span> </span>
-<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_recipe</span>(hotel_recipe)</span>
-<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>hotel_results_rf_tune <span class="ot">&lt;-</span> <span class="fu">tune_grid</span>(</span>
-<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>  rf_wf_tune,</span>
-<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">resamples =</span> hotel_folds,</span>
-<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">grid =</span> rf_grid)</span>
-<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a><span class="fu">show_best</span>(hotel_results_rf_tune, <span class="at">metric =</span> <span class="st">"roc_auc"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 5 × 9
-   mtry trees min_n .metric .estimator  mean     n std_err .config              
-  &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;chr&gt;   &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;                
-1    10   200    10 roc_auc binary     0.880    10 0.00124 Preprocessor1_Model08
-2    10   105    10 roc_auc binary     0.880    10 0.00142 Preprocessor1_Model05
-3    18   200    30 roc_auc binary     0.879    10 0.00121 Preprocessor1_Model18
-4    18   200    10 roc_auc binary     0.879    10 0.00122 Preprocessor1_Model09
-5    18   105    30 roc_auc binary     0.879    10 0.00118 Preprocessor1_Model15</code></pre>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>rf_grid <span class="ot">&lt;-</span> <span class="fu">grid_regular</span>(</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mtry</span>(<span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">18</span>)),</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">trees</span>(<span class="fu">c</span>(<span class="dv">10</span>, <span class="dv">200</span>)),</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">min_n</span>(<span class="fu">c</span>(<span class="dv">10</span>, <span class="dv">50</span>)),</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">levels =</span> <span class="dv">3</span></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a><span class="co"># combine the model and the dataset to a workflow</span></span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>rf_wf_tune <span class="ot">&lt;-</span> <span class="fu">workflow</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_model</span>(rf_model_tune) <span class="sc">%&gt;%</span> </span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_recipe</span>(hotel_recipe)</span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a><span class="co">#hotel_results_rf_tune &lt;- tune_grid(</span></span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a><span class="co">#  rf_wf_tune,</span></span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a><span class="co">#  resamples = hotel_folds,</span></span>
+<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a><span class="co">#  grid = rf_grid)</span></span>
+<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a><span class="co">#show_best(hotel_results_rf_tune, metric = "roc_auc")</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-</div>
-<div class="callout callout-style-default callout-note callout-titled" style="background-color: #ffebee; color: black; border-left: 3px solid red;">
+<div class="callout-important callout callout-style-default callout-captioned">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<div class="callout-title-container flex-fill">
+<div class="callout-caption-container flex-fill">
 Action
 </div>
 </div>
-<div class="callout-body-container callout-body">
+<div class="callout-body-container callout-body" style="background-color: #ffebee; color: black; border-left: 3px solid red;">
 <p>Try to tune other parameters of the Random Forest model using a grid to see if the results change. Is there a better model performance?</p>
 </div>
 </div>
@@ -577,23 +548,9 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     icon: icon
   };
   anchorJS.add('.anchored');
-  const isCodeAnnotation = (el) => {
-    for (const clz of el.classList) {
-      if (clz.startsWith('code-annotation-')) {                     
-        return true;
-      }
-    }
-    return false;
-  }
   const clipboard = new window.ClipboardJS('.code-copy-button', {
-    text: function(trigger) {
-      const codeEl = trigger.previousElementSibling.cloneNode(true);
-      for (const childEl of codeEl.children) {
-        if (isCodeAnnotation(childEl)) {
-          childEl.remove();
-        }
-      }
-      return codeEl.innerText;
+    target: function(trigger) {
+      return trigger.previousElementSibling;
     }
   });
   clipboard.on('success', function(e) {
@@ -658,92 +615,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       return note.innerHTML;
     });
   }
-      let selectedAnnoteEl;
-      const selectorForAnnotation = ( cell, annotation) => {
-        let cellAttr = 'data-code-cell="' + cell + '"';
-        let lineAttr = 'data-code-annotation="' +  annotation + '"';
-        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
-        return selector;
-      }
-      const selectCodeLines = (annoteEl) => {
-        const doc = window.document;
-        const targetCell = annoteEl.getAttribute("data-target-cell");
-        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
-        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
-        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
-        const lineIds = lines.map((line) => {
-          return targetCell + "-" + line;
-        })
-        let top = null;
-        let height = null;
-        let parent = null;
-        if (lineIds.length > 0) {
-            //compute the position of the single el (top and bottom and make a div)
-            const el = window.document.getElementById(lineIds[0]);
-            top = el.offsetTop;
-            height = el.offsetHeight;
-            parent = el.parentElement.parentElement;
-          if (lineIds.length > 1) {
-            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
-            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
-            height = bottom - top;
-          }
-          if (top !== null && height !== null && parent !== null) {
-            // cook up a div (if necessary) and position it 
-            let div = window.document.getElementById("code-annotation-line-highlight");
-            if (div === null) {
-              div = window.document.createElement("div");
-              div.setAttribute("id", "code-annotation-line-highlight");
-              div.style.position = 'absolute';
-              parent.appendChild(div);
-            }
-            div.style.top = top - 2 + "px";
-            div.style.height = height + 4 + "px";
-            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
-            if (gutterDiv === null) {
-              gutterDiv = window.document.createElement("div");
-              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
-              gutterDiv.style.position = 'absolute';
-              const codeCell = window.document.getElementById(targetCell);
-              const gutter = codeCell.querySelector('.code-annotation-gutter');
-              gutter.appendChild(gutterDiv);
-            }
-            gutterDiv.style.top = top - 2 + "px";
-            gutterDiv.style.height = height + 4 + "px";
-          }
-          selectedAnnoteEl = annoteEl;
-        }
-      };
-      const unselectCodeLines = () => {
-        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
-        elementsIds.forEach((elId) => {
-          const div = window.document.getElementById(elId);
-          if (div) {
-            div.remove();
-          }
-        });
-        selectedAnnoteEl = undefined;
-      };
-      // Attach click handler to the DT
-      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
-      for (const annoteDlNode of annoteDls) {
-        annoteDlNode.addEventListener('click', (event) => {
-          const clickedEl = event.target;
-          if (clickedEl !== selectedAnnoteEl) {
-            unselectCodeLines();
-            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
-            if (activeEl) {
-              activeEl.classList.remove('code-annotation-active');
-            }
-            selectCodeLines(clickedEl);
-            clickedEl.classList.add('code-annotation-active');
-          } else {
-            // Unselect the line
-            unselectCodeLines();
-            clickedEl.classList.remove('code-annotation-active');
-          }
-        });
-      }
   const findCites = (el) => {
     const parentEl = el.parentElement;
     if (parentEl) {

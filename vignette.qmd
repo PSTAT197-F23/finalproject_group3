@@ -90,6 +90,10 @@ library(tidymodels)
 library(janitor) ## clean_names()
 library(ranger) ## random forest model engine
 library(ggplot2)
+library(corrplot)
+library(ggbeeswarm)
+library(patchwork)
+
 
 # load data
 hotel <- read.csv("data/HotelReservations.csv")
@@ -121,42 +125,56 @@ Use `lapply()` to turn categorical variables into factors.
 
 ```{r, echo=FALSE}
 # Convert characters to factors and rename factor levels
-hotel<- data.frame(lapply(hotel, factor))
+hotel<- data.frame(lapply(hotel, function(x) if(is.character(x)) factor(x) else x))
 ```
 
-### Visualize EDA
+### Exploratory Data Analysis
 
-Let's make a correlation matrix to see the relationships of variables.
+After proper transformations, let's explore our data a little before we move on to the models.
 
-```{r}
+First, check the correlation between numerical variables.
+
+```{r, fig.width=5, fig.height=5}
 hotel %>%
   select(is.numeric) %>%
   cor() %>%
-  corrplot()
+  corrplot(type = "lower", tl.cex = 0.5, tl.srt = 45)
 ```
 
-We can see that no_of_repeated_guest is positively correlated with no_of_previous_bookings_not_canceled. Arrival year is negatively correlated with arrival_month. However, the correlation matrix indicates that there are too many predictors, some of which are more or less pointless. Therefore, we will select a few key predictors later on to simplify and clarify our model's predictions.
+`no_of_repeated_guest` is positively correlated with `no_of_previous_bookings_not_canceled`. `Arrival year` is negatively correlated with `arrival_month`. Since most of the predictors do not overly correlate with each other, they likely store different information as well. Thus, we will use all of them as predictors for decision tree and random forest models to pool from later.
 
-Additonally, let's make a histogram to see the distribution of the booking status.
+Next, make a histogram to see the distribution of the `booking status`.
 
-```{r}
+```{r, fig.width = 5, fig.height = 5}
 hotel %>%
   ggplot(aes(x=booking_status)) +
   geom_bar() +
   labs(title = "Distribution of Booking Status")
 ```
 
-From the plot, we can see that "Yes" has far more outcomes than "No," indicating that many people cancel their reservations. This means we will have a substantial amount of data for analysis.
+From the plot, we can see that "Canceled" outnumbers "Not_Canceled" a lot. In order to deal with the imbalance, we may use stratified sampling during data partitioning and a `class_weight` parameter during the model fitting process. They will be illustrated in latter sections.
 
-Lastly, let's make a ggplot of booking_status by lead_time.
-
+Lastly, let's take a look at the correlation between our predictors and the target variable.
 ```{r}
-ggplot(hotel, aes(lead_time)) + 
-  geom_bar(aes(fill = booking_status)) +
-  scale_fill_manual(values = c("#4DB3E6", "#37004D"))
-```
+numeric_vars <- names(hotel)[sapply(hotel, is.numeric)]  # Get names of numeric variables
 
-We can observe that lead time varies among all observations. However, as lead time increases, the instances of "No" surpass those of "Yes". This is indicated by the deep blue cylinder tending to decrease as the x-axis increases. Therefore, lead time might be a good indicator.
+plots <- list()  # List to store plots
+
+for (var in numeric_vars) {
+  p <- ggplot(hotel, aes_string(x = "booking_status", y = var)) +
+    geom_quasirandom() +
+    theme_minimal() +
+    ggtitle(var) + 
+    scale_x_discrete(labels = c("C", "NC")) +
+    theme(axis.title.y = element_text(size = rel(0.6)), axis.title.x = element_text(size = rel(0.6)), axis.text.y = element_text(size = rel(0.6)), axis.text.x = element_text(size = rel(0.6)), title = element_text(size = rel(0.6)), ) 
+  plots[[var]] <- p  # Store the plot in the list
+  
+}
+```
+```{r}
+plots[[1]] + plots[[2]] + plots[[3]] + plots[[4]] + plots[[5]] + plots[[6]] + plots[[7]] + plots[[8]] + plots[[9]] + plots[[10]] + plots[[11]] + plots[[12]] + plots[[13]] + plots[[14]] 
+```
+`lead_time` seems to be a strong predictor; `no_of_previous_booking_not_canceled` and `no_of_special_requests` also have a decent correlation with our target. We can later confirm these assumptions by inspecting feature importance in the random forest model.
 
 ### Data Partition
 
@@ -420,17 +438,17 @@ In a random forest model, there is a couple of important hyper-parameters to tun
 
 <summary>Overview of some common hyper-paremeters</summary>
 
-Number of Variables per split (mtry): This is the number of variables to possibly split at each node. Higher values more likely result in overfitting.
+Number of Variables per split (`mtry` in `rand_forest()`): This is the number of variables to possibly split at each node. Higher values more likely result in overfitting.
 
-Number of Trees (trees): This is the number of trees in the forest. Generally, more trees increase model performance and make the model more robust, but also increase computational cost.
+Number of Trees (`trees` in `rand_forest()`): This is the number of trees in the forest. Generally, more trees increase model performance and make the model more robust, but also increase computational cost.
 
-Maximum Depth of Trees (max_depth): This determines the maximum depth of each tree. Deeper trees can model more complex patterns, but they can also lead to overfitting. When there is a minimum number of samples required to split a node, you may set this to None.
+Maximum Depth of Trees (`max_depth` in the `ranger` engine): This determines the maximum depth of each tree. Deeper trees can model more complex patterns, but they can also lead to overfitting. When there is a minimum number of samples required to split a node, you may set this to None.
 
-Minimum Samples Split (min_n): This is the minimum number of samples required to split an internal node. Higher values prevent creating nodes that might overfit to your data.
+Minimum Samples Split (`min_n` in `rand_forest()`): This is the minimum number of samples required to split an internal node. Higher values prevent creating nodes that might overfit to your data.
 
-Criterion (importance): The function to measure the quality of a split. Supported criteria are "impurity" for the Gini impurity and "none" for the information gain.
+Criterion (`importance` in the `ranger` engine): The function to measure the quality of a split. Supported criteria are "impurity" for the Gini impurity and "none" for the information gain.
 
-Class Weight (class.weight): This parameter is used to balance the dataset. It's especially important when dealing with imbalanced datasets
+Class Weight (`class.weight` in the `ranger` engine): This parameter is used to balance the dataset. It's especially important when dealing with imbalanced datasets
 
 </details>
 

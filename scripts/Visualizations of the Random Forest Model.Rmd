@@ -36,7 +36,7 @@ hotel <- read.csv("~/Desktop/HotelReservations.csv")
 hotel
 
 hotel <- clean_names(hotel)
-hotel<- data.frame(lapply(hotel, factor))
+hotel <- data.frame(lapply(hotel, factor))
 
 #model_metrics %>% 
  #ggplot(aes(x = booking_status, .pred_class)) +

@@ -4,6 +4,12 @@ format: html
 editor: visual
 date: today
 author: Mindy Xu, Zoe Zhou, Amy Lyu, Jiashu Huang
+output:
+    html_document:
+      toc: true
+      toc_float: true
+      toc_depth: 2
+      code_folding: show
 ---
 
 # Random Forest Vignette
@@ -83,6 +89,7 @@ library(dplyr)
 library(tidymodels)
 library(janitor) ## clean_names()
 library(ranger) ## random forest model engine
+library(ggplot2)
 
 # load data
 hotel <- read.csv("data/HotelReservations.csv")
@@ -159,6 +166,7 @@ hotel_recipe <- hotel_recipe  %>%
 ```
 
 ## Cross-Validation Setup
+
 """BRIEFLY DESCRIBE WHAT CROSS_VALIDATION IS AND WHY WE USE IT"
 
 ```{r}
@@ -176,9 +184,21 @@ Try to change the folds number for the cross validation to see if the results ch
 
 ### Understanding Decision Trees
 
-""" DESCRIPTION OF DEICION TREES - TO BE COMPLETED"""
+**Decision Trees** are a fundamental component of many machine learning algorithms, known for their simplicity and interpretability. Decision trees handle **both categorical** and **numerical** data and can model complex relationships with **a series of simple decisions**.
 
-Now let's implement a basic decision tree. decision_tree() defines a model as a set of if/then statements that creates a tree-based structure. - set_mode() specifies the type of problem we are handling - set_engine() specifies the type of package/system used to fit the model later - set_args() specifies the values of arguments of decition_tree(); here we set the depth of the tree to be in the range of \[1, 15\].
+Imagine a decision tree as a tree-like model of decisions, resembling a flowchart, where each internal node represents a test on an attribute, each branch represents the outcome of the test, and each leaf node represents a class label (a decision taken after computing all attributes). The paths from root to leaf represent classification rules.
+
+However, they are prone to **overfitting**, especially when they are overly deep and complex. A tree that perfectly models the training data can fail to generalize to new, unseen data. Thus, balancing the depth of the tree and the amount of training data is crucial for building an effective decision tree model.
+
+------------------------------------------------------------------------
+
+Now let's implement a basic decision tree. `decision_tree()` defines a model as a set of if/then statements that creates a tree-based structure.
+
+\- `set_mode()` specifies the type of problem we are handling
+
+\- `set_engine()` specifies the type of package/system used to fit the model later
+
+\- `set_args()` specifies the values of arguments of `decision_tree()`; here we set the depth of the tree to be in the range of \[1, 15\].
 
 ```{r}
 # Define the model (Decision Tree)
@@ -208,45 +228,95 @@ hotel_results_dt <- fit_resamples(
 )
 ```
 
-Let's see how this model performed.
+Let's see how this model performed on the training set and testing set.
+
+First, retrieve the training set metrics recorded during the training process. Check the variance of the metrics across different folds in order to look for signs of overfitting.
 
 ```{r}
-# summarize the result
 results_summary_dt <- hotel_results_dt %>%
-  collect_metrics() %>%
-  select(c(".metric", "mean"))
+  collect_metrics(summarize = FALSE) %>%
+  select(c(".metric", ".estimate")) %>%
+  group_by(.metric) %>%
+  summarise(variance = var(.estimate))
 results_summary_dt
+```
+
+We see that the metrics does not vary too much across different folds. This means the model did not overfit. Let's proceed to assess the model on the testing set.
+
+Fit the model again, but this time on the entire training set.
+
+```{r}
+dt_fit_train <- fit(dt_wf, data = hotel_train)
+```
+
+Augment the testing set using the fitted model.
+
+```{r}
+dt_test <- augment(dt_fit_train,
+                                hotel_test) %>%
+  select(booking_status, starts_with(".pred"))
+
+predictions <- dt_test %>%
+  select(booking_status, .pred_class, .pred_Canceled)
+```
+
+Calculate the four metrics and present them in a tibble.
+
+```{r}
+sensitivity_val <- predictions %>% sens(truth = booking_status, estimate = .pred_class)
+specificity_val <- predictions %>% spec(truth = booking_status, estimate = .pred_class)
+accuracy_val <- predictions %>% accuracy(truth = booking_status, estimate = .pred_class)
+roc_auc_val <- predictions %>% roc_auc(truth = booking_status, .pred_Canceled)
+
+model_metrics <- tibble(
+  .metric = c("accuracy", "roc_auc", "sensitivity", "specificity"),
+  test = c(accuracy_val$.estimate, roc_auc_val$.estimate, sensitivity_val$.estimate, specificity_val$.estimate)
+)
+model_metrics
 ```
 
 ::: callout-important
 #### Action
 
-Play around with different parameters (engine, tree_depth, number of folds, etc) to see if you can achieve a higher performance.
+Play around with different parameters - engine, tree_depth, number of folds, etc. - and see if you can achieve a higher performance.
 :::
 
+------------------------------------------------------------------------
+
 ### Random Forest and Ensemble models
+
 """DESCRIPTION OF RANDOM FOREST - TO BE COMPLETED"
 
-Use rand_forest() to implement a random forest model. Similar to the decision tree model we implemented earlier, use set_mode() and set_engine() to complete our model definition.
+------------------------------------------------------------------------
+
+Use `rand_forest()` to implement a random forest model. Similar to the decision tree model we implemented earlier, use `set_mode()` and `set_engine()` to complete our model definition.
 
 There is a couple of parameters you can play around with:
-- mtry: the number of random sampled predictors used for each split
-- trees: number of trees
-- min_n: minimum number of data needed in a node to split further into two branches.
+
+\- mtry: the number of random sampled predictors used for each split
+
+\- trees: number of trees
+
+\- min_n: minimum number of data needed in a node to split further into two branches.
+
 ```{r}
-rf_model <- rand_forest(mtry = 15,
-                        trees = 20, 
+rf_model <- rand_forest(mtry = 10,
+                        trees = 10, 
                         min_n = 10) %>% 
-  set_mode("classification") %>% ## type of tasks
-  set_engine("ranger") ## type of engine used to fit the model
+  set_mode("classification") %>%
+  set_engine("ranger")
 ```
+
 Again, combine the model and recipe into a workflow.
+
 ```{r}
 rf_wf <- workflow() %>% 
   add_model(rf_model) %>% 
   add_recipe(hotel_recipe)
 ```
+
 Fit the model using fit_resamples(). You will notice this time it takes longer for the model to fit.
+
 ```{r}
 # fit the model
 hotel_results_rf <- fit_resamples(
@@ -257,21 +327,48 @@ hotel_results_rf <- fit_resamples(
 
 ```
 
-::: {.callout-important style="background-color: #ffebee; color: black; border-left: 3px solid red;"}
-#### Action
-
-Try altering the number of trees or the max depths of the trees to see if the results change. Is there a better model performance?
-:::
-
-### Result of Random Forest Model
+Check the variance of the model metrics across different folds
 
 ```{r}
 # summarize the result
 results_summary_rf <- hotel_results_rf %>%
-  collect_metrics() %>%
-  select(c(".metric", "mean"))
+  collect_metrics(summarize = FALSE) %>%
+  select(c(".metric", ".estimate")) %>%
+  group_by(.metric) %>%
+  summarise(variance = var(.estimate))
 results_summary_rf
 ```
+
+Again, we do not see clear signs of overfitting. Let's proceed to perform the same evaluation we did on the decision tree model.
+
+```{r}
+rf_fit_train <- fit(rf_wf, data = hotel_train)
+rf_test <- augment(rf_fit_train,
+                                hotel_test) %>%
+  select(booking_status, starts_with(".pred"))
+
+predictions <- rf_test %>%
+  select(booking_status, .pred_class, .pred_Canceled)
+
+sensitivity_val <- predictions %>% sens(truth = booking_status, estimate = .pred_class)
+specificity_val <- predictions %>% spec(truth = booking_status, estimate = .pred_class)
+accuracy_val <- predictions %>% accuracy(truth = booking_status, estimate = .pred_class)
+roc_auc_val <- predictions %>% roc_auc(truth = booking_status, .pred_Canceled)
+
+model_metrics <- tibble(
+  .metric = c("accuracy", "roc_auc", "sensitivity", "specificity"),
+  test = c(accuracy_val$.estimate, roc_auc_val$.estimate, sensitivity_val$.estimate, specificity_val$.estimate)
+)
+model_metrics
+```
+
+Notice a decent improvement in all four metrics compared to the decision tree model. It supports and demonstrates the idea that an ensemble model make predictions than a single model.
+
+::: {.callout-important}
+#### Action
+
+Try altering the number of trees or the max depths of the trees to see if the results change. Can you achieve a better model performance?
+:::
 
 ## Hyperparameters Tuning
 
@@ -287,13 +384,13 @@ rf_model_tune <- rand_forest(mtry = tune(), ## number of random sampled predicto
 
 ```
 
-### Grid/Cross-validation
+### Grid
 
 ```{r}
 rf_grid <- grid_regular(
-  mtry(c(2, 18)),
-  trees(c(10, 200)),
-  min_n(c(10, 50)),
+  mtry(c(10, 14)),
+  trees(c(100, 150)),
+  min_n(c(10, 20)),
   levels = 3
 )
 
@@ -310,7 +407,31 @@ rf_wf_tune <- workflow() %>%
 #show_best(hotel_results_rf_tune, metric = "roc_auc")
 ```
 
-::: {.callout-important style="background-color: #ffebee; color: black; border-left: 3px solid red;"}
+best_params \<- select_best(hotel_results_rf_tune, metric = "accuracy") rf_final_workflow_train \<- finalize_workflow(rf_wf_tune, best_params) rf_final_fit_train \<- fit(rf_final_workflow_train, data = hotel_train) rf_final_test \<- augment(rf_final_fit_train, hotel_test) %\>% select(booking_status, starts_with(".pred"))
+
+predictions \<- rf_final_test %\>% select(booking_status, .pred_class, .pred_Canceled)
+
+# Calculate Sensitivity and Specificity
+
+sensitivity_val \<- predictions %\>% sens(truth = booking_status, estimate = .pred_class) specificity_val \<- predictions %\>% spec(truth = booking_status, estimate = .pred_class)
+
+# Calculate Accuracy
+
+accuracy_val \<- predictions %\>% accuracy(truth = booking_status, estimate = .pred_class)
+
+# Calculate ROC AUC
+
+# Assuming .pred_Yes is the predicted probability for the "Yes" class
+
+roc_auc_val \<- predictions %\>% roc_auc(truth = booking_status, .pred_Canceled)
+
+# Create a new variable to store the metrics
+
+model_metrics \<- tibble( Sensitivity = sensitivity_val$.estimate,  Specificity = specificity_val$.estimate, Accuracy = accuracy_val$.estimate,  ROC_AUC = roc_auc_val$.estimate )
+
+model_metrics
+
+::: {.callout-important}
 #### Action
 
 Try to tune other parameters of the Random Forest model using a grid to see if the results change. Is there a better model performance?

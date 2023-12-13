@@ -99,6 +99,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <link href="vignette_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="vignette_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 </head>
 
@@ -196,9 +197,10 @@ Data Dictionary
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidymodels)</span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(janitor) <span class="do">## clean_names()</span></span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ranger) <span class="do">## random forest model engine</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># load data</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>hotel <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"data/HotelReservations.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co"># load data</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>hotel <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"data/HotelReservations.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="preprocess-the-data" class="level3">
@@ -311,8 +313,14 @@ Action
 <h2 class="anchored" data-anchor-id="intuition-and-architecture">Intuition and Architecture</h2>
 <section id="understanding-decision-trees" class="level3">
 <h3 class="anchored" data-anchor-id="understanding-decision-trees">Understanding Decision Trees</h3>
-<p>““” DESCRIPTION OF DEICION TREES - TO BE COMPLETED”“”</p>
-<p>Now let’s implement a basic decision tree. decision_tree() defines a model as a set of if/then statements that creates a tree-based structure. - set_mode() specifies the type of problem we are handling - set_engine() specifies the type of package/system used to fit the model later - set_args() specifies the values of arguments of decition_tree(); here we set the depth of the tree to be in the range of [1, 15].</p>
+<p><strong>Decision Trees</strong> are a fundamental component of many machine learning algorithms, known for their simplicity and interpretability. Decision trees handle <strong>both categorical</strong> and <strong>numerical</strong> data and can model complex relationships with <strong>a series of simple decisions</strong>.</p>
+<p>Imagine a decision tree as a tree-like model of decisions, resembling a flowchart, where each internal node represents a test on an attribute, each branch represents the outcome of the test, and each leaf node represents a class label (a decision taken after computing all attributes). The paths from root to leaf represent classification rules.</p>
+<p>However, they are prone to <strong>overfitting</strong>, especially when they are overly deep and complex. A tree that perfectly models the training data can fail to generalize to new, unseen data. Thus, balancing the depth of the tree and the amount of training data is crucial for building an effective decision tree model.</p>
+<hr>
+<p>Now let’s implement a basic decision tree. <code>decision_tree()</code> defines a model as a set of if/then statements that creates a tree-based structure.</p>
+<p>- <code>set_mode()</code> specifies the type of problem we are handling</p>
+<p>- <code>set_engine()</code> specifies the type of package/system used to fit the model later</p>
+<p>- <code>set_args()</code> specifies the values of arguments of <code>decision_tree()</code>; here we set the depth of the tree to be in the range of [1, 15].</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the model (Decision Tree)</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>dt_model<span class="ot">&lt;-</span><span class="fu">decision_tree</span>() <span class="sc">%&gt;%</span> </span>
@@ -336,21 +344,59 @@ Action
 <span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">metrics =</span> <span class="fu">metric_set</span>(roc_auc, accuracy, sensitivity, specificity) <span class="do">## metrics to keep track on</span></span>
 <span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Let’s see how this model performed.</p>
+<p>Let’s see how this model performed on the training set and testing set.</p>
+<p>First, retrieve the training set metrics recorded during the training process. Check the variance of the metrics across different folds in order to look for signs of overfitting.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># summarize the result</span></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>results_summary_dt <span class="ot">&lt;-</span> hotel_results_dt <span class="sc">%&gt;%</span></span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect_metrics</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">c</span>(<span class="st">".metric"</span>, <span class="st">"mean"</span>))</span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>results_summary_dt</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>results_summary_dt <span class="ot">&lt;-</span> hotel_results_dt <span class="sc">%&gt;%</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect_metrics</span>(<span class="at">summarize =</span> <span class="cn">FALSE</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">c</span>(<span class="st">".metric"</span>, <span class="st">".estimate"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(.metric) <span class="sc">%&gt;%</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">variance =</span> <span class="fu">var</span>(.estimate))</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>results_summary_dt</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 4 × 2
-  .metric      mean
+  .metric      variance
+  &lt;chr&gt;           &lt;dbl&gt;
+1 accuracy    0.0000759
+2 roc_auc     0.0000746
+3 sensitivity 0.000407 
+4 specificity 0.0000576</code></pre>
+</div>
+</div>
+<p>We see that the metrics does not vary too much across different folds. This means the model did not overfit. Let’s proceed to assess the model on the testing set.</p>
+<p>Fit the model again, but this time on the entire training set.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>dt_fit_train <span class="ot">&lt;-</span> <span class="fu">fit</span>(dt_wf, <span class="at">data =</span> hotel_train)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Augment the testing set using the fitted model.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>dt_test <span class="ot">&lt;-</span> <span class="fu">augment</span>(dt_fit_train,</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>                                hotel_test) <span class="sc">%&gt;%</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(booking_status, <span class="fu">starts_with</span>(<span class="st">".pred"</span>))</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>predictions <span class="ot">&lt;-</span> dt_test <span class="sc">%&gt;%</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(booking_status, .pred_class, .pred_Canceled)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Calculate the four metrics and present them in a tibble.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>sensitivity_val <span class="ot">&lt;-</span> predictions <span class="sc">%&gt;%</span> <span class="fu">sens</span>(<span class="at">truth =</span> booking_status, <span class="at">estimate =</span> .pred_class)</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>specificity_val <span class="ot">&lt;-</span> predictions <span class="sc">%&gt;%</span> <span class="fu">spec</span>(<span class="at">truth =</span> booking_status, <span class="at">estimate =</span> .pred_class)</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>accuracy_val <span class="ot">&lt;-</span> predictions <span class="sc">%&gt;%</span> <span class="fu">accuracy</span>(<span class="at">truth =</span> booking_status, <span class="at">estimate =</span> .pred_class)</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>roc_auc_val <span class="ot">&lt;-</span> predictions <span class="sc">%&gt;%</span> <span class="fu">roc_auc</span>(<span class="at">truth =</span> booking_status, .pred_Canceled)</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>model_metrics <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">.metric =</span> <span class="fu">c</span>(<span class="st">"accuracy"</span>, <span class="st">"roc_auc"</span>, <span class="st">"sensitivity"</span>, <span class="st">"specificity"</span>),</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">test =</span> <span class="fu">c</span>(accuracy_val<span class="sc">$</span>.estimate, roc_auc_val<span class="sc">$</span>.estimate, sensitivity_val<span class="sc">$</span>.estimate, specificity_val<span class="sc">$</span>.estimate)</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>model_metrics</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 4 × 2
+  .metric      test
   &lt;chr&gt;       &lt;dbl&gt;
-1 accuracy    0.765
-2 roc_auc     0.760
-3 sensitivity 0.494
-4 specificity 0.896</code></pre>
+1 accuracy    0.758
+2 roc_auc     0.753
+3 sensitivity 0.487
+4 specificity 0.890</code></pre>
 </div>
 </div>
 <div class="callout-important callout callout-style-default callout-captioned">
@@ -363,37 +409,92 @@ Action
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Play around with different parameters (engine, tree_depth, number of folds, etc) to see if you can achieve a higher performance.</p>
+<p>Play around with different parameters - engine, tree_depth, number of folds, etc. - and see if you can achieve a higher performance.</p>
 </div>
 </div>
+<hr>
 </section>
 <section id="random-forest-and-ensemble-models" class="level3">
 <h3 class="anchored" data-anchor-id="random-forest-and-ensemble-models">Random Forest and Ensemble models</h3>
 <p>“““DESCRIPTION OF RANDOM FOREST - TO BE COMPLETED”</p>
-<p>Use rand_forest() to implement a random forest model. Similar to the decision tree model we implemented earlier, use set_mode() and set_engine() to complete our model definition.</p>
-<p>There is a couple of parameters you can play around with: - mtry: the number of random sampled predictors used for each split - trees: number of trees - min_n: minimum number of data needed in a node to split further into two branches.</p>
+<hr>
+<p>Use <code>rand_forest()</code> to implement a random forest model. Similar to the decision tree model we implemented earlier, use <code>set_mode()</code> and <code>set_engine()</code> to complete our model definition.</p>
+<p>There is a couple of parameters you can play around with:</p>
+<p>- mtry: the number of random sampled predictors used for each split</p>
+<p>- trees: number of trees</p>
+<p>- min_n: minimum number of data needed in a node to split further into two branches.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>rf_model <span class="ot">&lt;-</span> <span class="fu">rand_forest</span>(<span class="at">mtry =</span> <span class="dv">15</span>,</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>                        <span class="at">trees =</span> <span class="dv">20</span>, </span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>                        <span class="at">min_n =</span> <span class="dv">10</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_mode</span>(<span class="st">"classification"</span>) <span class="sc">%&gt;%</span> <span class="do">## type of tasks</span></span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_engine</span>(<span class="st">"ranger"</span>) <span class="do">## type of engine used to fit the model</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>rf_model <span class="ot">&lt;-</span> <span class="fu">rand_forest</span>(<span class="at">mtry =</span> <span class="dv">10</span>,</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>                        <span class="at">trees =</span> <span class="dv">10</span>, </span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>                        <span class="at">min_n =</span> <span class="dv">10</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_mode</span>(<span class="st">"classification"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_engine</span>(<span class="st">"ranger"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Again, combine the model and recipe into a workflow.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>rf_wf <span class="ot">&lt;-</span> <span class="fu">workflow</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_model</span>(rf_model) <span class="sc">%&gt;%</span> </span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_recipe</span>(hotel_recipe)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>rf_wf <span class="ot">&lt;-</span> <span class="fu">workflow</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_model</span>(rf_model) <span class="sc">%&gt;%</span> </span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_recipe</span>(hotel_recipe)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Fit the model using fit_resamples(). You will notice this time it takes longer for the model to fit.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># fit the model</span></span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>hotel_results_rf <span class="ot">&lt;-</span> <span class="fu">fit_resamples</span>(</span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  rf_wf,</span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">resamples =</span> hotel_folds,</span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">metrics =</span> <span class="fu">metric_set</span>(roc_auc, accuracy, sensitivity, specificity) <span class="do">## metrics to keep track on</span></span>
-<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># fit the model</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>hotel_results_rf <span class="ot">&lt;-</span> <span class="fu">fit_resamples</span>(</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  rf_wf,</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">resamples =</span> hotel_folds,</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">metrics =</span> <span class="fu">metric_set</span>(roc_auc, accuracy, sensitivity, specificity) <span class="do">## metrics to keep track on</span></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<p>Check the variance of the model metrics across different folds</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># summarize the result</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>results_summary_rf <span class="ot">&lt;-</span> hotel_results_rf <span class="sc">%&gt;%</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect_metrics</span>(<span class="at">summarize =</span> <span class="cn">FALSE</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">c</span>(<span class="st">".metric"</span>, <span class="st">".estimate"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(.metric) <span class="sc">%&gt;%</span></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">variance =</span> <span class="fu">var</span>(.estimate))</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>results_summary_rf</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 4 × 2
+  .metric      variance
+  &lt;chr&gt;           &lt;dbl&gt;
+1 accuracy    0.0000409
+2 roc_auc     0.0000218
+3 sensitivity 0.000484 
+4 specificity 0.0000826</code></pre>
+</div>
+</div>
+<p>Again, we do not see clear signs of overfitting. Let’s proceed to perform the same evaluation we did on the decision tree model.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>rf_fit_train <span class="ot">&lt;-</span> <span class="fu">fit</span>(rf_wf, <span class="at">data =</span> hotel_train)</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>rf_test <span class="ot">&lt;-</span> <span class="fu">augment</span>(rf_fit_train,</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>                                hotel_test) <span class="sc">%&gt;%</span></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(booking_status, <span class="fu">starts_with</span>(<span class="st">".pred"</span>))</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>predictions <span class="ot">&lt;-</span> rf_test <span class="sc">%&gt;%</span></span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(booking_status, .pred_class, .pred_Canceled)</span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>sensitivity_val <span class="ot">&lt;-</span> predictions <span class="sc">%&gt;%</span> <span class="fu">sens</span>(<span class="at">truth =</span> booking_status, <span class="at">estimate =</span> .pred_class)</span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>specificity_val <span class="ot">&lt;-</span> predictions <span class="sc">%&gt;%</span> <span class="fu">spec</span>(<span class="at">truth =</span> booking_status, <span class="at">estimate =</span> .pred_class)</span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>accuracy_val <span class="ot">&lt;-</span> predictions <span class="sc">%&gt;%</span> <span class="fu">accuracy</span>(<span class="at">truth =</span> booking_status, <span class="at">estimate =</span> .pred_class)</span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a>roc_auc_val <span class="ot">&lt;-</span> predictions <span class="sc">%&gt;%</span> <span class="fu">roc_auc</span>(<span class="at">truth =</span> booking_status, .pred_Canceled)</span>
+<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a>model_metrics <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb24-15"><a href="#cb24-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">.metric =</span> <span class="fu">c</span>(<span class="st">"accuracy"</span>, <span class="st">"roc_auc"</span>, <span class="st">"sensitivity"</span>, <span class="st">"specificity"</span>),</span>
+<span id="cb24-16"><a href="#cb24-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">test =</span> <span class="fu">c</span>(accuracy_val<span class="sc">$</span>.estimate, roc_auc_val<span class="sc">$</span>.estimate, sensitivity_val<span class="sc">$</span>.estimate, specificity_val<span class="sc">$</span>.estimate)</span>
+<span id="cb24-17"><a href="#cb24-17" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb24-18"><a href="#cb24-18" aria-hidden="true" tabindex="-1"></a>model_metrics</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 4 × 2
+  .metric      test
+  &lt;chr&gt;       &lt;dbl&gt;
+1 accuracy    0.818
+2 roc_auc     0.875
+3 sensitivity 0.676
+4 specificity 0.886</code></pre>
+</div>
+</div>
+<p>Notice a decent improvement in all four metrics compared to the decision tree model. It supports and demonstrates the idea that an ensemble model make predictions than a single model.</p>
 <div class="callout-important callout callout-style-default callout-captioned">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -403,27 +504,8 @@ Action
 Action
 </div>
 </div>
-<div class="callout-body-container callout-body" style="background-color: #ffebee; color: black; border-left: 3px solid red;">
-<p>Try altering the number of trees or the max depths of the trees to see if the results change. Is there a better model performance?</p>
-</div>
-</div>
-</section>
-<section id="result-of-random-forest-model" class="level3">
-<h3 class="anchored" data-anchor-id="result-of-random-forest-model">Result of Random Forest Model</h3>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># summarize the result</span></span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>results_summary_rf <span class="ot">&lt;-</span> hotel_results_rf <span class="sc">%&gt;%</span></span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect_metrics</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">c</span>(<span class="st">".metric"</span>, <span class="st">"mean"</span>))</span>
-<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>results_summary_rf</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 4 × 2
-  .metric      mean
-  &lt;chr&gt;       &lt;dbl&gt;
-1 accuracy    0.819
-2 roc_auc     0.877
-3 sensitivity 0.682
-4 specificity 0.886</code></pre>
+<div class="callout-body-container callout-body">
+<p>Try altering the number of trees or the max depths of the trees to see if the results change. Can you achieve a better model performance?</p>
 </div>
 </div>
 </section>
@@ -433,36 +515,60 @@ Action
 <section id="random-forest-parameters-overview" class="level3">
 <h3 class="anchored" data-anchor-id="random-forest-parameters-overview">Random Forest Parameters overview</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the model (Random Forest)</span></span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>rf_model_tune <span class="ot">&lt;-</span> <span class="fu">rand_forest</span>(<span class="at">mtry =</span> <span class="fu">tune</span>(), <span class="do">## number of random sampled predictors used for each split</span></span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>                             <span class="at">trees =</span> <span class="fu">tune</span>(), <span class="do">## number of trees</span></span>
-<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>                             <span class="at">min_n =</span> <span class="fu">tune</span>()) <span class="sc">%&gt;%</span> <span class="do">## minimum number of data points needed in a node to split</span></span>
-<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_mode</span>(<span class="st">"classification"</span>) <span class="sc">%&gt;%</span> <span class="do">## type of tasks</span></span>
-<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_engine</span>(<span class="st">"ranger"</span>) <span class="do">## type of engine used to fit the model</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the model (Random Forest)</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>rf_model_tune <span class="ot">&lt;-</span> <span class="fu">rand_forest</span>(<span class="at">mtry =</span> <span class="fu">tune</span>(), <span class="do">## number of random sampled predictors used for each split</span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>                             <span class="at">trees =</span> <span class="fu">tune</span>(), <span class="do">## number of trees</span></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>                             <span class="at">min_n =</span> <span class="fu">tune</span>()) <span class="sc">%&gt;%</span> <span class="do">## minimum number of data points needed in a node to split</span></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_mode</span>(<span class="st">"classification"</span>) <span class="sc">%&gt;%</span> <span class="do">## type of tasks</span></span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_engine</span>(<span class="st">"ranger"</span>) <span class="do">## type of engine used to fit the model</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="gridcross-validation" class="level3">
-<h3 class="anchored" data-anchor-id="gridcross-validation">Grid/Cross-validation</h3>
+<section id="grid" class="level3">
+<h3 class="anchored" data-anchor-id="grid">Grid</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>rf_grid <span class="ot">&lt;-</span> <span class="fu">grid_regular</span>(</span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mtry</span>(<span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">18</span>)),</span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">trees</span>(<span class="fu">c</span>(<span class="dv">10</span>, <span class="dv">200</span>)),</span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">min_n</span>(<span class="fu">c</span>(<span class="dv">10</span>, <span class="dv">50</span>)),</span>
-<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">levels =</span> <span class="dv">3</span></span>
-<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a><span class="co"># combine the model and the dataset to a workflow</span></span>
-<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>rf_wf_tune <span class="ot">&lt;-</span> <span class="fu">workflow</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_model</span>(rf_model_tune) <span class="sc">%&gt;%</span> </span>
-<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_recipe</span>(hotel_recipe)</span>
-<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a><span class="co">#hotel_results_rf_tune &lt;- tune_grid(</span></span>
-<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a><span class="co">#  rf_wf_tune,</span></span>
-<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a><span class="co">#  resamples = hotel_folds,</span></span>
-<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a><span class="co">#  grid = rf_grid)</span></span>
-<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a><span class="co">#show_best(hotel_results_rf_tune, metric = "roc_auc")</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>rf_grid <span class="ot">&lt;-</span> <span class="fu">grid_regular</span>(</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mtry</span>(<span class="fu">c</span>(<span class="dv">10</span>, <span class="dv">14</span>)),</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">trees</span>(<span class="fu">c</span>(<span class="dv">100</span>, <span class="dv">150</span>)),</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">min_n</span>(<span class="fu">c</span>(<span class="dv">10</span>, <span class="dv">20</span>)),</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">levels =</span> <span class="dv">3</span></span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a><span class="co"># combine the model and the dataset to a workflow</span></span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>rf_wf_tune <span class="ot">&lt;-</span> <span class="fu">workflow</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_model</span>(rf_model_tune) <span class="sc">%&gt;%</span> </span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_recipe</span>(hotel_recipe)</span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a><span class="co">#hotel_results_rf_tune &lt;- tune_grid(</span></span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a><span class="co">#  rf_wf_tune,</span></span>
+<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a><span class="co">#  resamples = hotel_folds,</span></span>
+<span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a><span class="co">#  grid = rf_grid)</span></span>
+<span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-18"><a href="#cb27-18" aria-hidden="true" tabindex="-1"></a><span class="co">#show_best(hotel_results_rf_tune, metric = "roc_auc")</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<p>best_params &lt;- select_best(hotel_results_rf_tune, metric = “accuracy”) rf_final_workflow_train &lt;- finalize_workflow(rf_wf_tune, best_params) rf_final_fit_train &lt;- fit(rf_final_workflow_train, data = hotel_train) rf_final_test &lt;- augment(rf_final_fit_train, hotel_test) %&gt;% select(booking_status, starts_with(“.pred”))</p>
+<p>predictions &lt;- rf_final_test %&gt;% select(booking_status, .pred_class, .pred_Canceled)</p>
+</section>
+</section>
+</section>
+<section id="calculate-sensitivity-and-specificity" class="level1">
+<h1>Calculate Sensitivity and Specificity</h1>
+<p>sensitivity_val &lt;- predictions %&gt;% sens(truth = booking_status, estimate = .pred_class) specificity_val &lt;- predictions %&gt;% spec(truth = booking_status, estimate = .pred_class)</p>
+</section>
+<section id="calculate-accuracy" class="level1">
+<h1>Calculate Accuracy</h1>
+<p>accuracy_val &lt;- predictions %&gt;% accuracy(truth = booking_status, estimate = .pred_class)</p>
+</section>
+<section id="calculate-roc-auc" class="level1">
+<h1>Calculate ROC AUC</h1>
+</section>
+<section id="assuming-.pred_yes-is-the-predicted-probability-for-the-yes-class" class="level1">
+<h1>Assuming .pred_Yes is the predicted probability for the “Yes” class</h1>
+<p>roc_auc_val &lt;- predictions %&gt;% roc_auc(truth = booking_status, .pred_Canceled)</p>
+</section>
+<section id="create-a-new-variable-to-store-the-metrics" class="level1">
+<h1>Create a new variable to store the metrics</h1>
+<p>model_metrics &lt;- tibble( Sensitivity = sensitivity_val<span class="math inline">\(.estimate, Specificity = specificity_val\)</span>.estimate, Accuracy = accuracy_val<span class="math inline">\(.estimate, ROC_AUC = roc_auc_val\)</span>.estimate )</p>
+<p>model_metrics</p>
 <div class="callout-important callout callout-style-default callout-captioned">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -472,12 +578,10 @@ Action
 Action
 </div>
 </div>
-<div class="callout-body-container callout-body" style="background-color: #ffebee; color: black; border-left: 3px solid red;">
+<div class="callout-body-container callout-body">
 <p>Try to tune other parameters of the Random Forest model using a grid to see if the results change. Is there a better model performance?</p>
 </div>
 </div>
-</section>
-</section>
 <section id="understanding-the-random-forest-model" class="level2">
 <h2 class="anchored" data-anchor-id="understanding-the-random-forest-model">Understanding the Random Forest model</h2>
 <section id="features-importance" class="level3">

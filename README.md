@@ -14,11 +14,9 @@ This vignette offers a comprehensive guide to implementing the Random Forest alg
 
 This repository is structured to support the development and presentation of our project, which utilizes a vignette written in Quarto (**`qmd`**). Below is an overview of the main components of the directory structure:
 
--   **`data`**: This directory houses all datasets used in our project. It is divided into two subdirectories:
+-   **`data`**: This directory houses all datasets used in our project. There is only one dataset in this directory since the dataset that we obtained from kaggle is clean and doesn't need any processing.
 
-    -   **`raw`**: Contains the raw, unprocessed datasets as originally obtained.
-
-    -   **`processed`**: Stores data that has been cleaned, transformed, or otherwise processed and is ready for analysis or use in scripts.
+    -   **`mushroom.csv`**: Contains the raw, unprocessed datasets as originally obtained.
 
 -   **`scripts`**: This directory contains the R scripts used for data processing, analysis, and other computational tasks.
 

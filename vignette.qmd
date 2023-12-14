@@ -155,6 +155,7 @@ hotel %>%
 From the plot, we can see that "Canceled" outnumbers "Not_Canceled" a lot. In order to deal with the imbalance, we may use stratified sampling during data partitioning and a `class_weight` parameter during the model fitting process. They will be illustrated in latter sections.
 
 Lastly, let's take a look at the correlation between our predictors and the target variable.
+
 ```{r}
 numeric_vars <- names(hotel)[sapply(hotel, is.numeric)]  # Get names of numeric variables
 
@@ -171,9 +172,11 @@ for (var in numeric_vars) {
   
 }
 ```
+
 ```{r}
 plots[[1]] + plots[[2]] + plots[[3]] + plots[[4]] + plots[[5]] + plots[[6]] + plots[[7]] + plots[[8]] + plots[[9]] + plots[[10]] + plots[[11]] + plots[[12]] + plots[[13]] + plots[[14]] 
 ```
+
 `lead_time` seems to be a strong predictor; `no_of_previous_booking_not_canceled` and `no_of_special_requests` also have a decent correlation with our target. We can later confirm these assumptions by inspecting feature importance in the random forest model.
 
 ### Data Partition
@@ -207,7 +210,7 @@ Limit the amount of factor levels for each predictor using `step_other()`. Facto
 
 ```{r}
 hotel_recipe <- hotel_recipe %>% 
-  step_other(all_predictors(), threshold = 0.05)
+  step_other(all_nominal_predictors(), threshold = 0.05)
 ```
 
 Using `step_dummy()`, encode factor variables to multiple binary variables which correspond to each factor level.
@@ -337,6 +340,8 @@ Play around with different parameters - engine, tree_depth, number of folds, etc
 
 ### Random Forest and Ensemble models
 
+![](image/img-decisiontree.png)
+
 The Random Forest algorithm is **an ensemble learning method**, primarily used for classification and regression. It constructs a multitude of decision trees at training time. The fundamental concept is simple: combine the predictions from multiple decision trees to produce a more accurate prediction than a single decision tree.
 
 Each tree in a random forest is built from **a sample drawn with replacement (bootstrap sample)** from the training set. Furthermore, when splitting a node during the construction of the tree, the split is chosen from **a random subset of the features**, rather than the best split among all features. This strategy of 'bagging' and feature randomness introduces diversity among the trees, ultimately leading to a **more robust** overall prediction and **reducing the risk of overfitting**.
@@ -382,7 +387,6 @@ hotel_results_rf <- fit_resamples(
   resamples = hotel_folds,
   metrics = metric_set(roc_auc, accuracy, sensitivity, specificity) ## metrics to keep track on
 )
-
 ```
 
 Check the variance of the model metrics across different folds
@@ -543,15 +547,28 @@ Try to tune other parameters of the Random Forest model using a grid to see if t
 
 ### Features Importance
 
-### DRAFTS
+Random Forest can be used to rank the importance of variables in a regression or classification problem.
 
-------------------------------------------------------------------------
+Higher the value of mean decrease accuracy or mean decrease gini score , higher the importance of the variable in the model.
 
-![](image/img-rfsimplified.png)
+A good tool to visualize features importance is to use the VIP plot (Variable Importance Plot), you may use `vip()` function from the `vip` package as shown below:
 
-Steps Involved in Random Forest Algorithm
+```{r}
+library(vip)
+rf_final_fit_train %>% extract_fit_parsnip() %>% 
+  vip() +
+  theme_minimal()
+```
 
--   Step 1：In the Random forest model, a subset of data points and a subset of features is selected for constructing each decision tree. Simply put, n random records and m features are taken from the data set having k number of records.
--   Step 2：Individual decision trees are constructed for each sample.
--   Step 3：Each decision tree will generate an output.
--   Step 4：Final output is considered based on ***Majority Voting or Averaging*** for Classification and regression, respectively.
+As we analyzed before, leading_time is the most important feature after we plot the Variance Important Plot. So our results justified our preliminary exploratory analysis.
+
+## Final Thoughts
+
+After reading this vignette, you should know how Random Forest work as a machine learning algorithm and how to implement this model in R through our step-by-step instruction. You should also know how to fine tune Random Forest by adjusting mtry, trees, min_n. 
+
+::: callout-important
+#### Discussion
+
+Can you try fit Random Forest to some other datasets? How does it perform with Regression? Can you encapsulate fitting Random Forest model in R in a few steps?
+
+:::

@@ -2,13 +2,13 @@
 
 # README
 
-> Vignette on implementing Random Forest using mushroom data; created as a class project for PSTAT197A in Fall 2023.
+> Vignette on implementing Random Forest using hotel reservation data; created as a class project for PSTAT197A in Fall 2023.
 
-Contributors: Mindy Xu, Zoe Zhou, Amy Lyu, Jerry Huang
+Contributors: Mindy Xu, Zoe Zhou, Amy Lyu, Jiashu Huang
 
 ### Vignette Abstract
 
-This vignette offers a comprehensive guide to implementing the Random Forest algorithm using R, a powerful and versatile tool for machine learning. Our guide begins with an introduction to the fundamental principles of the Random Forest algorithm, emphasizing its advantages in handling both classification and regression tasks. We explore the **`randomForest`** package in R, detailing installation, data preparation, model training, and parameter tuning to optimize performance. Additionally, we demonstrate the implementation of Random Forest using mushroom data. Through clear explanations and code examples, readers will gain hands-on experience and the necessary skills to effectively utilize Random Forest in R for their data analysis and predictive modeling needs.
+This vignette offers a comprehensive guide to implementing the Random Forest algorithm using R, a powerful and versatile tool for machine learning. Our guide begins with an introduction to the fundamental principles of the Random Forest algorithm, emphasizing its advantages in handling both classification and regression tasks. We explore random forest models through  **`parsnip`** and **`tidymodels`** packages in R, detailing installation, data preparation, model training, and parameter tuning to optimize performance. Additionally, we demonstrate the implementation of Random Forest using hotel reservation data. Through clear explanations and code examples, readers will gain hands-on experience and the necessary skills to effectively utilize Random Forest in R for their data analysis and predictive modeling needs.
 
 ### Repository Contents
 

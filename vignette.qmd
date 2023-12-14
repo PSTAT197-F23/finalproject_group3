@@ -1,18 +1,14 @@
 ---
-title: "vignette.qmd"
-format: html
+title: "Random Forest Vignette"
+format:
+  html:
+    toc: true
+    toc_float: true
 editor: visual
 date: today
 author: Mindy Xu, Zoe Zhou, Amy Lyu, Jiashu Huang
-output:
-    html_document:
-      toc: true
-      toc_float: true
-      toc_depth: 2
-      code_folding: show
----
 
-# Random Forest Vignette
+---
 
 ## Introduction
 
@@ -93,7 +89,7 @@ library(ggplot2)
 library(corrplot)
 library(ggbeeswarm)
 library(patchwork)
-
+library(vip)
 
 # load data
 hotel <- read.csv("data/HotelReservations.csv")
@@ -503,7 +499,7 @@ hotel_results_rf_tune <- tune_grid(
 show_best(hotel_results_rf_tune, metric = "roc_auc")
 ```
 
-The `std_err()` column shows us that there is no sign of overfitting.
+The `std_err` column shows us that there is no sign of overfitting.
 
 Before we proceed to augment the testing set, first we need to select the best model out of all 27 models, and finalize the workflow with the best parameter list.
 
@@ -554,7 +550,6 @@ Higher the value of mean decrease accuracy or mean decrease gini score , higher 
 A good tool to visualize features importance is to use the VIP plot (Variable Importance Plot), you may use `vip()` function from the `vip` package as shown below:
 
 ```{r}
-library(vip)
 rf_final_fit_train %>% extract_fit_parsnip() %>% 
   vip() +
   theme_minimal()

@@ -7,7 +7,6 @@ format:
 editor: visual
 date: today
 author: Mindy Xu, Zoe Zhou, Amy Lyu, Jiashu Huang
-
 ---
 
 ## Introduction
@@ -559,11 +558,20 @@ As we analyzed before, leading_time is the most important feature after we plot 
 
 ## Final Thoughts
 
-After reading this vignette, you should know how Random Forest work as a machine learning algorithm and how to implement this model in R through our step-by-step instruction. You should also know how to fine tune Random Forest by adjusting mtry, trees, min_n. 
+After reading this vignette, you should know how Random Forest work as a machine learning algorithm and how to implement this model in R through our step-by-step instruction. You should also know how to fine tune Random Forest by adjusting mtry, trees, min_n.
 
 ::: callout-important
 #### Discussion
 
 Can you try fit Random Forest to some other datasets? How does it perform with Regression? Can you encapsulate fitting Random Forest model in R in a few steps?
-
 :::
+
+Expecting to learn more? *Here are some excellent articles that may help you progress more in this topic:*
+
+[Understand random forest algorithms with examples](https://www.analyticsvidhya.com/blog/2021/06/understanding-random-forest/)[^1]
+
+[^1]: Sruthi E R (2023, October 26). \*Understand random forest algorithms with examples (updated 2023)\*. Analytics Vidhya. \<https://www.analyticsvidhya.com/blog/2021/06/understanding-random-forest/\>
+
+[Practical Tutorial on Random Forest and Parameter Tuning in R](https://www.hackerearth.com/practice/machine-learning/machine-learning-algorithms/tutorial-random-forest-parameter-tuning-r/tutorial/)[^2]
+
+[^2]: Manish Saraswat (2023). \*Practical Tutorial on Random Forest and Parameter Tuning in R\* . R \<https://www.hackerearth.com/practice/machine-learning/machine-learning-algorithms/tutorial-random-forest-parameter-tuning-r/tutorial/\>

@@ -28,11 +28,11 @@ This repository is structured to support the development and presentation of our
 
     -   **`img-rfsimplified.png`**, **`img-decisiontree.png`**: These are specific figures (e.g., plots or diagrams) referenced in the vignette or other documentation materials.
 
--   **`vignette.qmd`**: The main Quarto markdown file for the vignette. It contains the source code and narrative text for the vignette, integrating explanations with code snippets and results.
+-   **`vignette.qmd`**: This is the main Quarto markdown file for the vignette. It contains the source code and narrative text for the vignette, integrating explanations with code snippets and results.
 
 -   **`vignette.html`**: This is the rendered HTML output of the Quarto markdown file, suitable for viewing in a web browser.
 
--   **`README.md`**: Provides an overview of the project, instructions for setup and usage, and other essential information for users or contributors. It's the first document viewers should read to understand what the project is about and how to navigate the repository.
+-   **`README.md`**: This provides an overview of the project, instructions for setup and usage, and other essential information for users or contributors. It's the first document viewers should read to understand what the project is about and how to navigate the repository.
 
 ### Reference List
 

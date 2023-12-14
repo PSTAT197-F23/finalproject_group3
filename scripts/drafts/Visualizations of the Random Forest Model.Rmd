@@ -24,7 +24,7 @@ rf_final_fit_train %>%
  vip(aesthetics = list(fill = "red3", color = "blue3"))
 ```
 
-From the variance importance plot, we can see that predictor variables “no_of_special_request_X1” and “no_of_special_request_X2” contribute the most to the model’s performance. This means that the number of special requests made by customers would greatly affect the number of bookings of the hotel. In addition, “arrival_year_X2018”, “market_segment_type_Online”, and “type_of_meal_plan_Meal.Plan.2” are important factors as well. However, predictor variables “arrival_month_other” and “arrival_month_X7” don’t have a large influence on the hotel's reservations. This make sense to me since the number of hotel reservations might depend on diverse customer segments and services, marketing and pricing strategies, loyalty programs and corporate contracts, which would balance out the seasonal variations in tourism and climate. 
+From the variance importance plot, we can see that the predictor variables "no_of_special_request_X1" and "no_of_special_request_X2" contribute the most to the model’s performance. This implies that the number of special requests made by customers greatly affects the hotel's booking numbers. Additionally, "arrival_year_X2018," "market_segment_type_Online," and "type_of_meal_plan_Meal.Plan.2" are also important factors. However, the predictor variables "arrival_month_other" and "arrival_month_X7" do not have a significant influence on the hotel's reservations. This makes sense to me, as the number of hotel reservations might depend on diverse customer segments and services, marketing and pricing strategies, loyalty programs, and corporate contracts, which would balance out the seasonal variations in tourism and climate.
 
 
 ```{r}

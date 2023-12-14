@@ -16,7 +16,7 @@ This repository is structured to support the development and presentation of our
 
 -   **`data`**: This directory houses all datasets used in our project. There is only one dataset in this directory since the dataset that we obtained from kaggle is clean and doesn't need any processing.
 
-    -   **`mushroom.csv`**: Contains the raw, unprocessed datasets as originally obtained.
+    -   **`HotelReservations.csv`**: Contains the raw, unprocessed datasets as originally obtained.
 
 -   **`scripts`**: This directory contains the R scripts used for data processing, analysis, and other computational tasks.
 
@@ -24,9 +24,9 @@ This repository is structured to support the development and presentation of our
 
     -   **`vignette-script.R`**: This is the main script file used for the vignette, encapsulating key analyses and methods.
 
--   **`img`**: In this directory, we store image files used in the vignette or other documentation.
+-   **`image`**: In this directory, we store image files used in the vignette or other documentation.
 
-    -   **`fig1.png`**, **`fig2.png`**: These are specific figures (e.g., plots or diagrams) referenced in the vignette or other documentation materials.
+    -   **`img-rfsimplified.png`**, **`img-decisiontree.png`**: These are specific figures (e.g., plots or diagrams) referenced in the vignette or other documentation materials.
 
 -   **`vignette.qmd`**: The main Quarto markdown file for the vignette. It contains the source code and narrative text for the vignette, integrating explanations with code snippets and results.
 
